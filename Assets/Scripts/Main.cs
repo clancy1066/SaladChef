@@ -18,13 +18,11 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
         if (gameInput != null)
             lastRead = GameInputWrapper.GetLastRead();
 
         if (lastRead.trigger1)
-            Debug.Log("Trigger 1");
+            Debug.Log("Trigger 1 again");
 
     }
 }
