@@ -20,7 +20,9 @@ public class Player : MonoBehaviour,I_GameCharacter
     [SerializeField]
     PLAYER_STATE    m_state         = PLAYER_STATE.IDLE;
     bool            m_stateChanged  = false;
-    
+
+    // 
+    PlayerModel     m_model;
     PlayerModel[]   m_models;
     Animator        m_animator;
 
@@ -31,7 +33,12 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     int             m_score;
 
+    Ingredient      m_focusIngredient;
+    Ingredient      m_ingredient;
+
+    // Input handing
     public GameInputWrapper m_gameInput;
+    MY_GAME_INPUTS          m_lastRead;
 
     public void Start()
     {
@@ -54,7 +61,9 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         index = 0;
 
-        m_models[index].gameObject.SetActive(true);
+        m_model = m_models[index];
+
+        m_model.gameObject.SetActive(true);
     }
 
     bool HandleNewState()
@@ -62,6 +71,13 @@ public class Player : MonoBehaviour,I_GameCharacter
         bool retVal = m_stateChanged;
 
         m_stateChanged = false;
+
+        if (retVal && m_animator != null)
+        {
+            Debug.Log("Anim State: " + (int)m_state);
+
+            m_animator.SetInteger("PlayerState", (int)m_state);
+        }
 
         return retVal;
     }
@@ -71,39 +87,65 @@ public class Player : MonoBehaviour,I_GameCharacter
         m_stateChanged = true;
 
         m_state = newState;
-
-        if (m_animator != null)
-        {
-            Debug.Log("Anim State: " + (int)m_state);
-
-            m_animator.SetInteger("PlayerState", (int)m_state);
-        }
     }
 
 
     public void Execute() 
-    {
-        
+    {     
         if (m_gameInput != null)
         {
-            MY_GAME_INPUTS gi = m_gameInput.GetLastRead();
-
-            if (gi.trigger1)
-            {
-                Debug.Log("Trigger 1");
-                m_animator.SetBool("Walk", true);
-            }
+            m_lastRead = m_gameInput.GetLastRead();
 
             switch (m_state)
             {
-                case PLAYER_STATE.IDLE:     DoIdle (gi);    break;
-                case PLAYER_STATE.WALKING:  DoWalking(gi);  break;
-                case PLAYER_STATE.TRANSFER: DoTransfer(gi); break;
-                case PLAYER_STATE.CHOPPING: DoChopping(gi); break;
+                case PLAYER_STATE.IDLE:     DoIdle(m_lastRead); ;   break;
+                case PLAYER_STATE.WALKING:  DoWalking(m_lastRead);  break;
+                case PLAYER_STATE.TRANSFER: DoTransfer(m_lastRead); break;
+                case PLAYER_STATE.CHOPPING: DoChopping(m_lastRead); break;
+            }
+        }
+
+       UpdateIngredient();
+
+        Debug.DrawLine(m_model.transform.position, m_model.transform.position + Vector3.up * 2.0f);
+    }
+
+    void UpdateIngredient()
+    {
+        if (m_model == null || m_ingredient == null || m_model.GetHolder()==null)
+            return;
+
+        m_ingredient.transform.position = m_model.GetHolder().transform.position;
+
+    }
+
+    void CheckAction(MY_GAME_INPUTS gi)
+    {
+        if (m_model == null)
+            return;
+
+        if (gi.trigger1)
+        {
+            if (m_ingredient!=null)
+            {
+                Ingredient.Release(m_ingredient);
+                m_ingredient = null;
+            }
+
+            if (m_focusIngredient != null)
+            {
+                m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
+                m_focusIngredient = null;
+
+                if (m_ingredient != null)
+                {
+                    m_ingredient.transform.localPosition    = Vector3.zero;
+                    m_ingredient.transform.position         = m_model.GetHolder().transform.position;
+                    m_ingredient.transform.parent = null; ;
+                }
             }
         }
     }
-
 
     bool IsMoving(MY_GAME_INPUTS gi)
     {
@@ -114,10 +156,15 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     void DoIdle(MY_GAME_INPUTS gi)
     {
-        HandleNewState();
 
+        if (HandleNewState())
+        {
+            
+        }
         if (IsMoving(gi))
             ChangeState(PLAYER_STATE.WALKING);
+
+        CheckAction(gi);
     }
     void DoWalking(MY_GAME_INPUTS gi)
     {
@@ -139,8 +186,12 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             delta.y = 0.0f;
 
-           m_rb.transform.LookAt(delta);
+            Quaternion lookAt = Quaternion.LookRotation(delta);
+
+            m_rb.transform.rotation = Quaternion.Lerp(m_rb.transform.rotation, lookAt, 0.99f); 
         }
+
+        CheckAction(gi);
     }
     void DoTransfer(MY_GAME_INPUTS gi)
     {
@@ -150,5 +201,20 @@ public class Player : MonoBehaviour,I_GameCharacter
     void DoChopping(MY_GAME_INPUTS gi)
     {
 
+    }
+
+    // Collision callback
+    public void OnFoundIngredient(Ingredient ingredient)
+    {
+        Debug.Log("OnFoundIngredient");
+
+        m_focusIngredient = ingredient;
+    }
+
+    public void OnFoundChoppingTable(Ingredient ingredient)
+    {
+        Debug.Log("OnFoundIngredient");
+
+        m_focusIngredient = ingredient;
     }
 }
