@@ -24,6 +24,37 @@ public class PlayerModel : MonoBehaviour
             SendMessageUpwards("OnFoundIngredient", ingredient);
             return;
         }
-           
+
+        // Check ingredient first
+        ChoppingTable choppingTable = other.GetComponent<ChoppingTable>();
+
+        if (choppingTable != null)
+        {
+            SendMessageUpwards("OnFoundChoppingTable", choppingTable);
+            return;
+        }
+
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // Check ingredient first
+        Ingredient ingredient = other.GetComponent<Ingredient>();
+
+        if (ingredient != null)
+        {
+            SendMessageUpwards("OnClearIngredient", ingredient);
+            return;
+        }
+
+        // Check ingredient first
+        ChoppingTable choppingTable = other.GetComponent<ChoppingTable>();
+
+        if (choppingTable != null)
+        {
+            SendMessageUpwards("OnClearChoppingTable", choppingTable);
+            return;
+        }
+
     }
 }

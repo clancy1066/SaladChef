@@ -20,17 +20,25 @@ public class Ingredient : MonoBehaviour
 
     public INGREDIENT_TYPE  m_ingredientType = INGREDIENT_TYPE.INGREDIENT1;
     public float            m_choppingTime;
+    Collider[]              m_colliders;
 
     // Need this to shut off collision
     Rigidbody               m_rb;
 
     private void Start()
     {
+        InstanceInit();
+    }
+
+    public void InstanceInit()
+    {
         if (!m_spawnLists.ContainsKey(m_ingredientType))
         {
             m_spawnLists[m_ingredientType] = new List<Ingredient>();
             m_spawnLists[m_ingredientType].Add(this);
         }
+
+        m_colliders = GetComponentsInChildren<Collider>();
 
         m_rb = GetComponentInChildren<Rigidbody>();
     }
@@ -39,6 +47,11 @@ public class Ingredient : MonoBehaviour
     {
         if (m_rb != null)
             m_rb.detectCollisions = onOrOff;
+
+     //   if (m_colliders != null)
+     //       foreach (Collider collider in m_colliders)
+     //           collider.gameObject.SetActive(onOrOff);
+
     }
     static public Ingredient Grab(INGREDIENT_TYPE ingredientType) 
     {
@@ -60,6 +73,7 @@ public class Ingredient : MonoBehaviour
 
         if (retVal != null)
         {
+            retVal.InstanceInit();
             retVal.gameObject.SetActive(true);
             retVal.ActivateCollision(false);
         }

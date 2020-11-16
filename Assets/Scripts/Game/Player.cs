@@ -33,8 +33,12 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     int             m_score;
 
+    // Hold focus until it is latched by user action
     Ingredient      m_focusIngredient;
     Ingredient      m_ingredient;
+
+    //
+    ChoppingTable   m_focusChoppingTable;
 
     // Input handing
     public GameInputWrapper m_gameInput;
@@ -72,21 +76,23 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         m_stateChanged = false;
 
-        if (retVal && m_animator != null)
-        {
-            Debug.Log("Anim State: " + (int)m_state);
-
-            m_animator.SetInteger("PlayerState", (int)m_state);
-        }
-
         return retVal;
     }
+
+   
 
     void ChangeState(PLAYER_STATE newState)
     {
         m_stateChanged = true;
 
         m_state = newState;
+
+        if (m_animator != null)
+        {
+            Debug.Log("Anim State: " + (int)m_state);
+
+            m_animator.SetInteger("PlayerState", (int)m_state);
+        }
     }
 
 
@@ -128,7 +134,14 @@ public class Player : MonoBehaviour,I_GameCharacter
         {
             if (m_ingredient!=null)
             {
-                Ingredient.Release(m_ingredient);
+                if (m_focusChoppingTable == null)
+                    Ingredient.Release(m_ingredient);
+                else
+                { 
+                    m_focusChoppingTable.SetIngredient(m_ingredient);
+                    ChangeState(PLAYER_STATE.CHOPPING);
+                }
+                
                 m_ingredient = null;
             }
 
@@ -139,11 +152,21 @@ public class Player : MonoBehaviour,I_GameCharacter
 
                 if (m_ingredient != null)
                 {
+                    m_ingredient.transform.localScale = Vector3.one * 0.10f;
                     m_ingredient.transform.localPosition    = Vector3.zero;
                     m_ingredient.transform.position         = m_model.GetHolder().transform.position;
                     m_ingredient.transform.parent = null; ;
                 }
             }
+        }
+    }
+
+    void FullStop()
+    {
+        if (m_rb != null)
+        {
+            m_rb.ResetCenterOfMass();
+            m_rb.ResetInertiaTensor();
         }
     }
 
@@ -159,7 +182,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         if (HandleNewState())
         {
-            
+            FullStop();
         }
         if (IsMoving(gi))
             ChangeState(PLAYER_STATE.WALKING);
@@ -186,9 +209,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             delta.y = 0.0f;
 
-            Quaternion lookAt = Quaternion.LookRotation(delta);
-
-            m_rb.transform.rotation = Quaternion.Lerp(m_rb.transform.rotation, lookAt, 0.99f); 
+            m_model.transform.LookAt(delta); 
         }
 
         CheckAction(gi);
@@ -200,10 +221,33 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     void DoChopping(MY_GAME_INPUTS gi)
     {
+        if (HandleNewState())
+        {
+            if (m_focusChoppingTable != null)
+            {
+               
 
+                Transform newPos = m_focusChoppingTable.GetPlayerPos();
+
+             //   m_rb.transform.position = newPos.position;
+             //   m_rb.transform.rotation = newPos.rotation;
+
+                m_model.transform.position = newPos.position;
+                m_model.transform.rotation = newPos.rotation;
+
+                FullStop();
+
+            }
+
+        }
+
+        if (m_focusChoppingTable==null || m_focusChoppingTable.Done())
+        {
+            ChangeState(PLAYER_STATE.IDLE);
+        }
     }
 
-    // Collision callback
+    // Collision callbacks
     public void OnFoundIngredient(Ingredient ingredient)
     {
         Debug.Log("OnFoundIngredient");
@@ -211,10 +255,24 @@ public class Player : MonoBehaviour,I_GameCharacter
         m_focusIngredient = ingredient;
     }
 
-    public void OnFoundChoppingTable(Ingredient ingredient)
+    public void OnFoundChoppingTable(ChoppingTable choppingTable)
     {
-        Debug.Log("OnFoundIngredient");
+        Debug.Log("OnFoundTable");
 
-        m_focusIngredient = ingredient;
+       m_focusChoppingTable = choppingTable;
+    }
+
+    public void OnClearIngredient(Ingredient ingredient)
+    {
+        Debug.Log("OnClearIngredient");
+
+        m_focusIngredient = null;
+    }
+
+    public void OnClearChoppingTable(ChoppingTable choppingTable)
+    {
+        Debug.Log("OnClearTable");
+
+        m_focusChoppingTable =null;
     }
 }
