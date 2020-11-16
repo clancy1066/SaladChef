@@ -40,8 +40,8 @@ public class UnityInput : MonoBehaviour,i_NativeInputIFC
 		lastRead.stickDeltas[0].x 	= lastRead.sticks[0].x;
 		lastRead.stickDeltas[0].y 	= lastRead.sticks[0].y;
 
-		lastRead.sticks[0].x  		= (Input.GetKey(KeyCode.LeftArrow)?-1.0f:0.0f) +(float)(Input.GetKey(KeyCode.RightArrow)?1.0f:0.0f);
-		lastRead.sticks[0].y  		= (Input.GetKey(KeyCode.UpArrow)?1.0f:0.0f)   +(Input.GetKey(KeyCode.DownArrow)?-1.0f:0.0f);  
+		lastRead.sticks[0].x  		= (Input.GetKey(KeyCode.A)?-1.0f:0.0f) +(float)(Input.GetKey(KeyCode.D)?1.0f:0.0f);
+		lastRead.sticks[0].y  		= (Input.GetKey(KeyCode.W)?1.0f:0.0f)   +(Input.GetKey(KeyCode.S)?-1.0f:0.0f);  
 
 		lastRead.stickDeltas[0].x  	= lastRead.sticks[0].x - lastRead.stickDeltas[0].x; 
 		lastRead.stickDeltas[0].y  	= lastRead.sticks[0].y - lastRead.stickDeltas[0].y; 
@@ -65,8 +65,6 @@ public class UnityInput : MonoBehaviour,i_NativeInputIFC
 		Mathf.Clamp(lastRead.sticks[1].y,-1.0f,1.0f); 
 
 	}
-
-
 		// Update is called once per frame
 		void Update()
     {

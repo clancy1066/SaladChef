@@ -56,15 +56,15 @@ public class GameInputWrapper : MonoBehaviour
 	public InputHandler		inputHandler;
 
 	// From the machine
-	static CJI_INPUT		 currentInputs;
+	public  CJI_INPUT		 currentInputs;
 
 	// Massaged into game date
-	static MY_GAME_INPUTS	currentGameInputs;
+	public MY_GAME_INPUTS	currentGameInputs;
 
 	public void				SetInputHandler(InputHandler newInputHandler) {inputHandler = newInputHandler; }
 
 	[SerializeField]
-	static public MY_GAME_INPUTS	GetLastRead() { return currentGameInputs; }
+	public MY_GAME_INPUTS	GetLastRead() { return currentGameInputs; }
 
 	void Start()
 	{
@@ -82,7 +82,7 @@ public class GameInputWrapper : MonoBehaviour
 		}
 	}
 
-	public void SetCurrent(CJI_INPUT newInputs) 
+	virtual public void SetCurrent(CJI_INPUT newInputs) 
 	{
 		if (newInputs==null)
 			return;

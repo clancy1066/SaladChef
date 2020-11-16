@@ -6,9 +6,13 @@ public class Main : MonoBehaviour
 {
     MY_GAME_INPUTS lastRead;
     I_GameCharacter[] allCharacters;
+    Player thePlayer;
 
-    public GameInputWrapper gameInput;
+    
+    public  Transform playerSoloStart;
 
+    public  Transform playerMultStart1;
+    public  Transform playerMultStart2;
 
     // Start is called before the first frame update
     void Start()
@@ -19,12 +23,10 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameInput != null)
-            lastRead = GameInputWrapper.GetLastRead();
-
+      
         if (allCharacters != null)
             foreach (I_GameCharacter gc in allCharacters)
-                gc.Execute(lastRead);
+                gc.Execute();
 
     }
 }
