@@ -10,19 +10,34 @@ public class ChoppingTable : MonoBehaviour
     [SerializeField]
     public Transform m_ingredientPos;
 
-    Ingredient  m_currentIngredient;
-    float       m_chopTimer;
+    public Plate m_currentPlate;
 
-    public void SetIngredient(Ingredient ingredient)
+    List<Ingredient>    m_currentIngredients;
+    float               m_chopTimer;
+    bool                m_doRun = false;
+
+    void Start()
     {
-        m_currentIngredient = ingredient;
+        m_currentIngredients = new List<Ingredient>();
+        m_currentPlate = GetComponentInChildren<Plate>();
+    }
+
+    public void Run()
+    {
+        m_doRun = true;
+    }
+
+    public void AddIngredient(Ingredient ingredient)
+    {
+        if (!m_currentIngredients.Contains(ingredient))
+            m_currentIngredients.Add(ingredient);
 
         if (m_ingredientPos != null)
-            m_currentIngredient.transform.position = m_ingredientPos.position;
+            ingredient.transform.position = m_ingredientPos.position;
         else
-            m_currentIngredient.transform.position = transform.position;
+            ingredient.transform.position = transform.position;
 
-        m_chopTimer = (ingredient != null ? ingredient.m_choppingTime:0.0f);
+        m_chopTimer += (ingredient != null ? ingredient.m_choppingTime:0.0f);
     }
 
     public Transform GetPlayerPos()
@@ -35,20 +50,41 @@ public class ChoppingTable : MonoBehaviour
 
     public bool Done()
     {
-        if (m_currentIngredient != null && m_chopTimer >= 0.0f)
+        if (m_currentIngredients.Count>0 && m_chopTimer>=0.0f)
             return false;
 
         return true;
 
     }
 
+    public bool HasIngredients()
+    {  
+        return (m_currentIngredients.Count>0);
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (!Done())
+        if (m_doRun && !Done())
         {
             m_chopTimer -= Time.deltaTime;
-            return;
+
+            if (Done())
+            {
+                if (m_currentPlate)
+                {
+                    m_currentPlate.AddIngredientq(m_currentIngredients);
+                    m_currentIngredients.Clear();
+                }
+
+                m_doRun = false;
+            }
         }
     }
+
+    public void OnClick()
+    {
+        Debug.Log("OnClick");
+    }
+
 }

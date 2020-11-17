@@ -46,12 +46,10 @@ public class Ingredient : MonoBehaviour
     public void ActivateCollision(bool onOrOff)
     {
         if (m_rb != null)
+        {
             m_rb.detectCollisions = onOrOff;
-
-     //   if (m_colliders != null)
-     //       foreach (Collider collider in m_colliders)
-     //           collider.gameObject.SetActive(onOrOff);
-
+       //     m_rb.gameObject.SetActive(onOrOff);
+        }
     }
     static public Ingredient Grab(INGREDIENT_TYPE ingredientType) 
     {
@@ -76,6 +74,8 @@ public class Ingredient : MonoBehaviour
             retVal.InstanceInit();
             retVal.gameObject.SetActive(true);
             retVal.ActivateCollision(false);
+
+            retVal.transform.localScale = m_spawnLists[ingredientType][0].transform.localScale;
         }
         return retVal;
     }
@@ -94,9 +94,5 @@ public class Ingredient : MonoBehaviour
         // Leave it laying around if wqe don't reach here
         ingredient.gameObject.SetActive(false);
 
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Collide");
     }
 }

@@ -34,9 +34,9 @@ public class Player : MonoBehaviour,I_GameCharacter
     int             m_score;
 
     // Hold focus until it is latched by user action
-    Ingredient      m_focusIngredient;
-    Ingredient      m_ingredient;
-    bool            m_waitingIngredientTransfer;
+    Ingredient          m_focusIngredient;
+    Ingredient          m_ingredient;
+    bool                m_waitingIngredientTransfer;
 
     //
     ChoppingTable   m_focusChoppingTable;
@@ -52,6 +52,8 @@ public class Player : MonoBehaviour,I_GameCharacter
         m_rb        = GetComponentInChildren<Rigidbody>();
 
         Choose();
+
+        ChangeState(PLAYER_STATE.IDLE);
     }
 
     public void Choose()
@@ -123,33 +125,60 @@ public class Player : MonoBehaviour,I_GameCharacter
             return;
 
         m_ingredient.transform.position = m_model.GetHolder().transform.position;
-
     }
 
-    void CheckAction(MY_GAME_INPUTS gi)
+    void CaptureIngredient()
+    {
+        m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
+        m_focusIngredient = null;
+
+        if (m_ingredient != null)
+        {
+            m_ingredient.transform.localScale *= 0.75f;
+            m_ingredient.transform.localPosition = Vector3.zero;
+
+            m_ingredient.transform.position = m_model.GetHolder().transform.position;
+
+            m_ingredient.transform.parent = null;// m_model.GetHolder().transform;
+        }
+    }
+
+void CheckAction(MY_GAME_INPUTS gi)
     {
         if (m_model == null)
             return;
 
+        // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
+            // If I have an ingredien, either drop it or put it on the table
             if (m_ingredient!=null)
             {
-                if (m_focusChoppingTable == null)
+                // If I have an ingredient no table, drop it
+                if (m_focusChoppingTable==null)
                     Ingredient.Release(m_ingredient);
                 else
-                { 
-                    m_focusChoppingTable.SetIngredient(m_ingredient);
-                    ChangeState(PLAYER_STATE.CHOPPING);
+                {
+                    // If I have an ingredient and a table, drop it on the table
+                    m_focusChoppingTable.AddIngredient(m_ingredient);
+                    m_ingredient.transform.parent = null;
                 }
-                
-                m_ingredient = null;
-            }
 
-            if (m_focusIngredient != null)
-            {
-                ChangeState(PLAYER_STATE.TRANSFER);
+                // Always after an action 
+                m_ingredient        = null;
+                m_focusIngredient =  null;
             }
+            // No ingredient
+            else
+            {
+                if (m_focusIngredient!=null)
+                    ChangeState(PLAYER_STATE.TRANSFER);
+                else
+                // Start chopping with a table full of ingredients)
+                if (m_focusChoppingTable!=null && m_focusChoppingTable.HasIngredients())
+                    ChangeState(PLAYER_STATE.CHOPPING);
+            }
+           
         }
     }
 
@@ -171,7 +200,6 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     void DoIdle(MY_GAME_INPUTS gi)
     {
-
         if (HandleNewState())
         {
             FullStop();
@@ -221,16 +249,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         if (!m_waitingIngredientTransfer)
             return;
 
-        m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
-        m_focusIngredient = null;
-
-        if (m_ingredient != null)
-        {
-            m_ingredient.transform.localScale = Vector3.one * 0.10f;
-            m_ingredient.transform.localPosition = Vector3.zero;
-            m_ingredient.transform.position = m_model.GetHolder().transform.position;
-            m_ingredient.transform.parent = null; ;
-        }
+        CaptureIngredient();
 
         ChangeState(PLAYER_STATE.IDLE);
     }
@@ -248,6 +267,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
                 FullStop();
 
+                m_focusChoppingTable.Run();
             }
 
         }
