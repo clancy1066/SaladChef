@@ -55,6 +55,7 @@ public class PlayerModel : MonoBehaviour
             SendMessageUpwards("OnClearChoppingTable", choppingTable);
             return;
         }
-
     }
+
+    
 }

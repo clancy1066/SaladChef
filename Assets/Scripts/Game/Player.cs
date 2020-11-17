@@ -36,6 +36,7 @@ public class Player : MonoBehaviour,I_GameCharacter
     // Hold focus until it is latched by user action
     Ingredient      m_focusIngredient;
     Ingredient      m_ingredient;
+    bool            m_waitingIngredientTransfer;
 
     //
     ChoppingTable   m_focusChoppingTable;
@@ -147,16 +148,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             if (m_focusIngredient != null)
             {
-                m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
-                m_focusIngredient = null;
-
-                if (m_ingredient != null)
-                {
-                    m_ingredient.transform.localScale = Vector3.one * 0.10f;
-                    m_ingredient.transform.localPosition    = Vector3.zero;
-                    m_ingredient.transform.position         = m_model.GetHolder().transform.position;
-                    m_ingredient.transform.parent = null; ;
-                }
+                ChangeState(PLAYER_STATE.TRANSFER);
             }
         }
     }
@@ -216,7 +208,31 @@ public class Player : MonoBehaviour,I_GameCharacter
     }
     void DoTransfer(MY_GAME_INPUTS gi)
     {
+        if (m_focusIngredient==null)
+        {
+            ChangeState(PLAYER_STATE.IDLE);
+            return;
+        }
+        if (HandleNewState())
+        {
+            m_waitingIngredientTransfer = false;
+        }
 
+        if (!m_waitingIngredientTransfer)
+            return;
+
+        m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
+        m_focusIngredient = null;
+
+        if (m_ingredient != null)
+        {
+            m_ingredient.transform.localScale = Vector3.one * 0.10f;
+            m_ingredient.transform.localPosition = Vector3.zero;
+            m_ingredient.transform.position = m_model.GetHolder().transform.position;
+            m_ingredient.transform.parent = null; ;
+        }
+
+        ChangeState(PLAYER_STATE.IDLE);
     }
 
     void DoChopping(MY_GAME_INPUTS gi)
@@ -225,12 +241,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         {
             if (m_focusChoppingTable != null)
             {
-               
-
                 Transform newPos = m_focusChoppingTable.GetPlayerPos();
-
-             //   m_rb.transform.position = newPos.position;
-             //   m_rb.transform.rotation = newPos.rotation;
 
                 m_model.transform.position = newPos.position;
                 m_model.transform.rotation = newPos.rotation;
@@ -274,5 +285,12 @@ public class Player : MonoBehaviour,I_GameCharacter
         Debug.Log("OnClearTable");
 
         m_focusChoppingTable =null;
+    }
+
+    public void OnIngredientEvent()
+    {
+        m_waitingIngredientTransfer = true;
+
+        Debug.Log("OnIngredientEvent");
     }
 }

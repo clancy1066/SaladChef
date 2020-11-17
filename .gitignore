@@ -3,3 +3,11 @@
 ################################################################################
 
 *.meta
+/Library
+/.vs/SaladChef/v16
+/ProjectSettings
+/Packages
+/Logs
+/obj/Debug
+/UserSettings
+/Temp
