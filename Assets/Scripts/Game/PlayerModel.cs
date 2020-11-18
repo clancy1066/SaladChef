@@ -34,6 +34,14 @@ public class PlayerModel : MonoBehaviour
             return;
         }
 
+        // Check garbage
+        TrashCan trashCan = other.GetComponent<TrashCan>();
+        if (trashCan != null)
+        {
+            SendMessageUpwards("OnFoundTrashCan", trashCan);
+            return;
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
@@ -53,6 +61,14 @@ public class PlayerModel : MonoBehaviour
         if (choppingTable != null)
         {
             SendMessageUpwards("OnClearChoppingTable", choppingTable);
+            return;
+        }
+
+        // Check garbage
+        TrashCan trashCan = other.GetComponent<TrashCan>();
+        if (trashCan != null)
+        {
+            SendMessageUpwards("OnClearTrashCan", trashCan);
             return;
         }
     }

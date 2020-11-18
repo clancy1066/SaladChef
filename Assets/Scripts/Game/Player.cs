@@ -42,6 +42,9 @@ public class Player : MonoBehaviour,I_GameCharacter
     //
     ChoppingTable       m_focusChoppingTable;
 
+    // Trashcan
+    TrashCan            m_focusTrashCan;
+
     // Input handing
     public GameInputWrapper m_gameInput;
     MY_GAME_INPUTS          m_lastRead;
@@ -150,6 +153,11 @@ void CheckAction(MY_GAME_INPUTS gi)
         // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
+            if (m_focusTrashCan!=null)
+            {
+                ClearIngredients();
+                return;
+            }
             // If I have an ingredien, either drop it or put it on the table
             if (m_ingredients.Count>= cm_MAX_INGREDIENTS)
             {
@@ -176,8 +184,11 @@ void CheckAction(MY_GAME_INPUTS gi)
                         ChangeState(PLAYER_STATE.CHOPPING);
                     else
                     {
-                        m_focusChoppingTable.AddIngredients(m_ingredients);
-                        ClearIngredients();
+                        if (m_focusChoppingTable != null)
+                        {
+                            m_focusChoppingTable.AddIngredients(m_ingredients);
+                            ClearIngredients();
+                        }
                     }
                 }
             }
@@ -282,6 +293,8 @@ void CheckAction(MY_GAME_INPUTS gi)
     }
 
     // Collision callbacks
+    
+    // Player near a grabbable ingredient
     public void OnFoundIngredient(Ingredient ingredient)
     {
         Debug.Log("OnFoundIngredient");
@@ -289,18 +302,18 @@ void CheckAction(MY_GAME_INPUTS gi)
         m_focusIngredient = ingredient;
     }
 
-    public void OnFoundChoppingTable(ChoppingTable choppingTable)
-    {
-        Debug.Log("OnFoundTable");
-
-       m_focusChoppingTable = choppingTable;
-    }
-
     public void OnClearIngredient(Ingredient ingredient)
     {
         Debug.Log("OnClearIngredient");
 
         m_focusIngredient = null;
+    }
+    // Player near a chopping table
+    public void OnFoundChoppingTable(ChoppingTable choppingTable)
+    {
+        Debug.Log("OnFoundTable");
+
+       m_focusChoppingTable = choppingTable;
     }
 
     public void OnClearChoppingTable(ChoppingTable choppingTable)
@@ -310,6 +323,22 @@ void CheckAction(MY_GAME_INPUTS gi)
         m_focusChoppingTable =null;
     }
 
+    // Player near a chopping table
+    public void OnFoundTrashCan(TrashCan trashCan)
+    {
+        Debug.Log("OnFoundTrashCan");
+
+        m_focusTrashCan = trashCan;
+    }
+
+    public void OnClearTrashCan(TrashCan trashCan)
+    {
+        Debug.Log("OnClearTrashCan");
+
+        m_focusTrashCan = null;
+    }
+
+    //  Handling animation event callback
     public void OnIngredientEvent()
     {
         m_waitingIngredientTransfer = true;

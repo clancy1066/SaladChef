@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Game\FollowCam.cs" />
     <Compile Include="Assets\Scripts\UI\HUD.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
+    <Compile Include="Assets\Scripts\Game\TrashCan.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Dummy.txt" />
