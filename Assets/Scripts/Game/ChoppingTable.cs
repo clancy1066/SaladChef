@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class ChoppingTable : MonoBehaviour
 {
-    [SerializeField]
-    public Transform m_playerPos;
+   // Placment
+    public Transform    m_playerPos;
+    public Transform     m_ingredientPos;
 
-    [SerializeField]
-    public Transform m_ingredientPos;
-
-    public Plate m_currentPlate;
+    public Plate        m_currentPlate;
 
     List<Ingredient>    m_currentIngredients;
     float               m_chopTimer;
@@ -29,6 +27,9 @@ public class ChoppingTable : MonoBehaviour
 
     public void AddIngredient(Ingredient ingredient)
     {
+        if (ingredient == null)
+            return;
+
         if (!m_currentIngredients.Contains(ingredient))
             m_currentIngredients.Add(ingredient);
 
@@ -74,6 +75,13 @@ public class ChoppingTable : MonoBehaviour
                 if (m_currentPlate)
                 {
                     m_currentPlate.AddIngredientq(m_currentIngredients);
+                    
+                    if (Waiter.SubmitPlate(m_currentPlate))
+                        Debug.Log("Order Complete");
+                    else
+                        Debug.Log("Order Failed");
+
+                    m_currentPlate.Clear();
                     m_currentIngredients.Clear();
                 }
 

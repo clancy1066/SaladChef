@@ -4,26 +4,29 @@ using UnityEngine;
 
 public class Plate : MonoBehaviour
 {
+    List<Ingredient> m_ingredients = new List<Ingredient>();
+    public uint      m_ingredientMask;
 
-    List<Ingredient> m_ingredients;    
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        m_ingredients = new List<Ingredient>();
+       
+    }
+
+    public void Clear()
+    {
+        foreach (Ingredient ingredient in m_ingredients)
+            Ingredient.Release(ingredient);
+
+        m_ingredients.Clear();
     }
 
     public void AddIngredientq(List<Ingredient> ingredients)
     {
-        if (ingredients == null)
+        if (ingredients==null)
             return;
 
-        foreach (Ingredient ingredient in ingredients)
-        {
-            ingredient.transform.position = transform.position;
-
-            if (!m_ingredients.Contains(ingredient))
-                m_ingredients.Add(ingredient);
-        }
+       
     }
 }
