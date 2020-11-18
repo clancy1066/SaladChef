@@ -12,6 +12,9 @@ public class Order : MonoBehaviour
 
     TextMesh m_text;
 
+    // Offsets for placing ingredients
+    static Vector3[] m_ingredientOffsets = { Vector3.right, -Vector3.right, Vector3.up };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,14 +28,14 @@ public class Order : MonoBehaviour
         {
             string newText = ("Order: ");
 
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) newText += ".1._";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) newText += ".2.";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) newText += ".3._";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) newText += ".4."; ;
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) newText += ".5._";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) newText += ".6."; ;
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += ".7._";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += ".8."; ;
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) newText += "1_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) newText += "2_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) newText += "3_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) newText += "4_"; ;
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) newText += "5_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) newText += "6_"; ;
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
 
              newText += (" Value: " + m_value + " Time: " + m_customerWaitTime);
 
@@ -40,15 +43,25 @@ public class Order : MonoBehaviour
         }
     }
 
+    public void Clear()
+    {
+        m_recipeMask = 0;
 
-    public bool FullFilled(uint ingredientMask)
+        foreach (Ingredient ingredient in m_ingredients)
+            Ingredient.Release(ingredient);
+    }
+
+     public bool FullFilled(uint ingredientMask)
     {
         return ((ingredientMask & m_recipeMask) == ingredientMask);
     }
 
-    public void AddIngredients(List<Ingredient> ingredients)
-    {
-        m_recipeMask = 0;
+    public void SetIngredients(List<Ingredient> ingredients)
+    { 
+        int offsetCount = 0;
+
+        // Start fresh
+        Clear();
 
         if (ingredients != null)
             foreach (Ingredient ingredient in ingredients)
@@ -60,16 +73,15 @@ public class Order : MonoBehaviour
 
                 m_ingredients.Add(newIngredient);
 
-                Vector3 addUp = Vector3.up;
-                
-                addUp *= 4.0f*(float)newIngredient.m_ingredientType;
+                Vector3 offset = m_ingredientOffsets[offsetCount % m_ingredientOffsets.Length];
 
-                Transform pT = transform;
+                offsetCount++;
 
-                newIngredient.transform.parent = pT;
+                newIngredient.transform.parent = transform;
 
                 newIngredient.transform.localPosition = Vector3.zero;
-                newIngredient.transform.position = transform.position+addUp;
+                newIngredient.transform.position = transform.position+ 0.25f*offset;
+                newIngredient.transform.rotation = transform.rotation;
 
                 m_recipeMask |= ingredient.m_ingredientMask;
             }
@@ -79,7 +91,7 @@ public class Order : MonoBehaviour
     {
         m_recipeMask = 0;
 
-        AddIngredients(ingredients);
+        SetIngredients(ingredients);
 
         m_value = value;
         m_customerWaitTime = customerWaitTime;

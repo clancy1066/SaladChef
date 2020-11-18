@@ -91,6 +91,7 @@ public class Ingredient : MonoBehaviour
             retVal.gameObject.SetActive(true);
             retVal.ActivateCollision(false);
 
+            retVal.transform.SetParent(null);
             retVal.transform.localScale = m_spawnLists[ingredientType][0].transform.localScale;
         }
         return retVal;
@@ -108,6 +109,7 @@ public class Ingredient : MonoBehaviour
             m_spawnLists[ingredient.m_ingredientType].Add(ingredient);
 
         // Leave it laying around if wqe don't reach here
+        ingredient.transform.SetParent(null);
         ingredient.gameObject.SetActive(false);
 
     }

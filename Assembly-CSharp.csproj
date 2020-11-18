@@ -58,24 +58,23 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\UI\Button.cs" />
     <Compile Include="Assets\Scripts\Game\AnimEventHandler.cs" />
+    <Compile Include="Assets\Scripts\Game\Waiter.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
     <Compile Include="Assets\Scripts\Game\PlayerModel.cs" />
     <Compile Include="Assets\Scripts\System\Input System\GameInputWrapperP2.cs" />
+    <Compile Include="Assets\Scripts\Game\Customer.cs" />
     <Compile Include="Assets\Scripts\Game\Player.cs" />
     <Compile Include="Assets\Scripts\System\Input System\UnityInput.cs" />
+    <Compile Include="Assets\Scripts\Game\OrderDispatcher.cs" />
+    <Compile Include="Assets\Scripts\Game\Order.cs" />
     <Compile Include="Assets\Scripts\System\Input System\InputHandler.cs" />
     <Compile Include="Assets\Scripts\System\Input System\GameInputWrapper.cs" />
     <Compile Include="Assets\Scripts\Game\ChoppingTable.cs" />
     <Compile Include="Assets\Scripts\System\Input System\i_NativeInputIFC.cs" />
-    <Compile Include="Assets\Scripts\Game\Plate.cs" />
     <Compile Include="Assets\Scripts\Game\I_GameCharacter.cs" />
     <Compile Include="Assets\Scripts\Game\FollowCam.cs" />
     <Compile Include="Assets\Scripts\UI\HUD.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
-    <Compile Include="Assets\Scripts\Game\Waiter.cs" />
-    <Compile Include="Assets\Scripts\Game\Order.cs" />
-    <Compile Include="Assets\Scripts\Game\OrderDispatcher.cs" />
-    <Compile Include="Assets\Scripts\Game\Customer.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Dummy.txt" />

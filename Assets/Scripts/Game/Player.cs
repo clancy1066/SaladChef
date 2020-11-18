@@ -34,12 +34,13 @@ public class Player : MonoBehaviour,I_GameCharacter
     int             m_score;
 
     // Hold focus until it is latched by user action
+    List<Ingredient>    m_ingredients = new List<Ingredient>();
     Ingredient          m_focusIngredient;
-    Ingredient          m_ingredient;
     bool                m_waitingIngredientTransfer;
+    const int           cm_MAX_INGREDIENTS = 2;
 
     //
-    ChoppingTable   m_focusChoppingTable;
+    ChoppingTable       m_focusChoppingTable;
 
     // Input handing
     public GameInputWrapper m_gameInput;
@@ -114,32 +115,30 @@ public class Player : MonoBehaviour,I_GameCharacter
             }
         }
 
-       UpdateIngredient();
-
         Debug.DrawLine(m_model.transform.position, m_model.transform.position + Vector3.up * 2.0f);
     }
 
-    void UpdateIngredient()
+    void ClearIngredients()
     {
-        if (m_model == null || m_ingredient == null || m_model.GetHolder()==null)
-            return;
+        foreach (Ingredient ingredient in m_ingredients)
+            Ingredient.Release(ingredient);
 
-        m_ingredient.transform.position = m_model.GetHolder().transform.position;
+        m_ingredients.Clear();
     }
 
     void CaptureIngredient()
     {
-        m_ingredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
-        m_focusIngredient = null;
+        Ingredient newIngredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
 
-        if (m_ingredient != null)
+        if (newIngredient != null)
         {
-            m_ingredient.transform.localScale *= 0.75f;
-            m_ingredient.transform.localPosition = Vector3.zero;
+            newIngredient.transform.localScale      *= 0.75f;
+            newIngredient.transform.localPosition   = Vector3.zero;
+            newIngredient.transform.position        = m_model.GetHolder().transform.position;
+            newIngredient.transform.parent          = m_model.GetHolder().transform;
 
-            m_ingredient.transform.position = m_model.GetHolder().transform.position;
-
-            m_ingredient.transform.parent = null;// m_model.GetHolder().transform;
+            if (!m_ingredients.Contains(newIngredient))
+                m_ingredients.Add(newIngredient);
         }
     }
 
@@ -152,31 +151,35 @@ void CheckAction(MY_GAME_INPUTS gi)
         if (gi.trigger1)
         {
             // If I have an ingredien, either drop it or put it on the table
-            if (m_ingredient!=null)
+            if (m_ingredients.Count>= cm_MAX_INGREDIENTS)
             {
                 // If I have an ingredient no table, drop it
-                if (m_focusChoppingTable==null)
-                    Ingredient.Release(m_ingredient);
-                else
+                if (m_focusChoppingTable!=null)
                 {
                     // If I have an ingredient and a table, drop it on the table
-                    m_focusChoppingTable.AddIngredient(m_ingredient);
-                    m_ingredient.transform.parent = null;
+                    m_focusChoppingTable.AddIngredients(m_ingredients);
                 }
 
                 // Always after an action 
-                m_ingredient        = null;
-                m_focusIngredient =  null;
+                ClearIngredients();
+
             }
             // No ingredient
             else
             {
-                if (m_focusIngredient!=null)
+                if (m_focusIngredient != null)
                     ChangeState(PLAYER_STATE.TRANSFER);
                 else
-                // Start chopping with a table full of ingredients)
-                if (m_focusChoppingTable!=null && m_focusChoppingTable.HasIngredients())
-                    ChangeState(PLAYER_STATE.CHOPPING);
+                {
+                    // Start chopping with a table full of ingredients)
+                    if (m_ingredients.Count<1 && m_focusChoppingTable != null && m_focusChoppingTable.HasIngredients())
+                        ChangeState(PLAYER_STATE.CHOPPING);
+                    else
+                    {
+                        m_focusChoppingTable.AddIngredients(m_ingredients);
+                        ClearIngredients();
+                    }
+                }
             }
            
         }

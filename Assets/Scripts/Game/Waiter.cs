@@ -29,14 +29,22 @@ public class Waiter : MonoBehaviour
     {
         
     }
+
+    static public bool HasAvaliableSeating()
+    {
+        return (sm_freeCustomers.Count > 0);
+    }
+
     static Customer GetCustomer()
     {
         Customer retVal = null; ;
 
         if (sm_freeCustomers.Count>0)
         {
-            retVal = sm_freeCustomers[0];
-            sm_freeCustomers.RemoveAt(0);
+            int index = Random.Range(0, 100) % sm_freeCustomers.Count;
+
+            retVal = sm_freeCustomers[index];
+            sm_freeCustomers.RemoveAt(index);
 
             if (!sm_waitingCustomers.Contains(retVal))
                 sm_waitingCustomers.Add(retVal);
@@ -73,14 +81,11 @@ public class Waiter : MonoBehaviour
 
         return true;
     }
-
-    static public bool SubmitPlate(Plate plate)
+    
+    static public bool SubmitPlate(uint ingredientMask)
     {
-        if (plate == null)
-            return false;
- 
         foreach (Customer customer in sm_waitingCustomers)
-            if (customer.OrderFullFilled(plate.m_ingredientMask))
+            if (customer.OrderFullFilled(ingredientMask))
             {
                 // Add score
 

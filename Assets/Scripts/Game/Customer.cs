@@ -32,6 +32,6 @@ public class Customer : MonoBehaviour
         order.transform.localPosition = Vector3.zero;
 
         order.gameObject.SetActive(true);
-   //     order.transform.position = Vector3.zero;
+
     }
 }

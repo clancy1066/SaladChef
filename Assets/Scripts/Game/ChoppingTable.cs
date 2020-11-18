@@ -6,18 +6,17 @@ public class ChoppingTable : MonoBehaviour
 {
    // Placment
     public Transform    m_playerPos;
-    public Transform     m_ingredientPos;
-
-    public Plate        m_currentPlate;
+    public Transform    m_ingredientPos;
 
     List<Ingredient>    m_currentIngredients;
+    uint                m_currentIngredientsMask;
+
     float               m_chopTimer;
     bool                m_doRun = false;
 
     void Start()
     {
         m_currentIngredients = new List<Ingredient>();
-        m_currentPlate = GetComponentInChildren<Plate>();
     }
 
     public void Run()
@@ -25,20 +24,30 @@ public class ChoppingTable : MonoBehaviour
         m_doRun = true;
     }
 
-    public void AddIngredient(Ingredient ingredient)
+    public void AddIngredients(List<Ingredient> ingredients)
     {
-        if (ingredient == null)
+        if (ingredients == null || ingredients.Count<1)
             return;
 
-        if (!m_currentIngredients.Contains(ingredient))
-            m_currentIngredients.Add(ingredient);
+        foreach (Ingredient ingredient in ingredients)
+        {
+            Ingredient newIngredient = Ingredient.Grab(ingredient.m_ingredientType);
 
-        if (m_ingredientPos != null)
-            ingredient.transform.position = m_ingredientPos.position;
-        else
-            ingredient.transform.position = transform.position;
+            if (!m_currentIngredients.Contains(newIngredient))
+                m_currentIngredients.Add(newIngredient);
 
-        m_chopTimer += (ingredient != null ? ingredient.m_choppingTime:0.0f);
+            Transform parentTransform = (m_ingredientPos != null ? m_ingredientPos : transform);
+
+            newIngredient.transform.localPosition  = Vector3.zero;
+            newIngredient.transform.position       = parentTransform.position;
+            newIngredient.transform.rotation       = parentTransform.rotation;
+
+            newIngredient.transform.SetParent(parentTransform);
+
+            m_chopTimer += (newIngredient != null ? newIngredient.m_choppingTime : 0.0f);
+
+            m_currentIngredientsMask |= newIngredient.m_ingredientMask;
+        }
     }
 
     public Transform GetPlayerPos()
@@ -58,6 +67,16 @@ public class ChoppingTable : MonoBehaviour
 
     }
 
+    public void ClearIngredients()
+    {
+        m_currentIngredientsMask = 0;
+
+        foreach (Ingredient ingredient in m_currentIngredients)
+            Ingredient.Release(ingredient);
+
+        m_currentIngredients.Clear();
+    }
+
     public bool HasIngredients()
     {  
         return (m_currentIngredients.Count>0);
@@ -72,19 +91,13 @@ public class ChoppingTable : MonoBehaviour
 
             if (Done())
             {
-                if (m_currentPlate)
-                {
-                    m_currentPlate.AddIngredients(m_currentIngredients);
-                    
-                    if (Waiter.SubmitPlate(m_currentPlate))
-                        Debug.Log("Order Complete");
-                    else
-                        Debug.Log("Order Failed");
+              if (Waiter.SubmitPlate(m_currentIngredientsMask))
+                  Debug.Log("Order Complete");
+              else
+                  Debug.Log("Order Failed");
 
-                    m_currentPlate.Clear();
-                    m_currentIngredients.Clear();
-                }
-
+                ClearIngredients();
+          
                 m_doRun = false;
             }
         }

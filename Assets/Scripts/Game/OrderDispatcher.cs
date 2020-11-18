@@ -18,7 +18,7 @@ public class OrderDispatcher : MonoBehaviour
     }
 
     float       m_nextOrderTime     = 3.0f;
-    const int   cm_MAX_INGREDIENTS  = 3;
+    const int   cm_MAX_INGREDIENTS  = 2;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +34,9 @@ public class OrderDispatcher : MonoBehaviour
 
     void GatherIngredients()
     {
+        if (sm_ingredients.Count > 0)
+            return;
+
         // Release the last batch
         foreach (Ingredient ingredient in sm_ingredients)
             Ingredient.Release(ingredient);
@@ -92,6 +95,8 @@ public class OrderDispatcher : MonoBehaviour
         if (!sm_freeOrders.Contains(order))
             sm_freeOrders.Add(order);
 
+        order.Clear();
+
         order.gameObject.SetActive(false);
     }
 
@@ -119,15 +124,18 @@ public class OrderDispatcher : MonoBehaviour
         if (m_nextOrderTime < 0)
         {
             // In case new ones were added - SHould not aloways call this
-            GatherIngredients();
-
-            ConstructRandomIngredientList();
-
-            Order newOrder = CreateOrder(5.0f, 1, m_ingredientsTMP);
-
-            if (!Waiter.AddOrder(newOrder))
+            if (Waiter.HasAvaliableSeating())
             {
-                FreeOrder(newOrder);
+                GatherIngredients();
+
+                ConstructRandomIngredientList();
+
+                Order newOrder = CreateOrder(5.0f, 1, m_ingredientsTMP);
+
+                if (!Waiter.AddOrder(newOrder))
+                {
+                    FreeOrder(newOrder);
+                }
             }
 
             m_nextOrderTime = Random.Range(5.0f, 10.0f);
