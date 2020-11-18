@@ -74,7 +74,7 @@ public class ChoppingTable : MonoBehaviour
             {
                 if (m_currentPlate)
                 {
-                    m_currentPlate.AddIngredientq(m_currentIngredients);
+                    m_currentPlate.AddIngredients(m_currentIngredients);
                     
                     if (Waiter.SubmitPlate(m_currentPlate))
                         Debug.Log("Order Complete");

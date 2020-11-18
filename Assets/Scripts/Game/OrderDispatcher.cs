@@ -18,7 +18,7 @@ public class OrderDispatcher : MonoBehaviour
     }
 
     float       m_nextOrderTime     = 3.0f;
-    const int   cm_MAX_INGREDIENTS  = 1;
+    const int   cm_MAX_INGREDIENTS  = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -46,7 +46,11 @@ public class OrderDispatcher : MonoBehaviour
             Ingredient newIngredient = Ingredient.Grab(ingredientType);
 
             if (newIngredient != null)
+            {
                 sm_ingredients.Add(newIngredient);
+
+                newIngredient.gameObject.SetActive(false);
+            }
         }
     }
 

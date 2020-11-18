@@ -60,6 +60,17 @@ public class Order : MonoBehaviour
 
                 m_ingredients.Add(newIngredient);
 
+                Vector3 addUp = Vector3.up;
+                
+                addUp *= 4.0f*(float)newIngredient.m_ingredientType;
+
+                Transform pT = transform;
+
+                newIngredient.transform.parent = pT;
+
+                newIngredient.transform.localPosition = Vector3.zero;
+                newIngredient.transform.position = transform.position+addUp;
+
                 m_recipeMask |= ingredient.m_ingredientMask;
             }
     }

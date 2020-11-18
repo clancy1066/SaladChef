@@ -22,11 +22,32 @@ public class Plate : MonoBehaviour
         m_ingredients.Clear();
     }
 
-    public void AddIngredientq(List<Ingredient> ingredients)
+    public void AddIngredients(List<Ingredient> ingredients)
     {
-        if (ingredients==null)
-            return;
+        m_ingredientMask = 0;
 
-       
+        if (ingredients != null)
+            foreach (Ingredient ingredient in ingredients)
+            {
+                Ingredient newIngredient = Ingredient.Grab(ingredient.m_ingredientType);
+
+                if (newIngredient == null)
+                    continue;
+
+                m_ingredients.Add(newIngredient);
+
+                Vector3 addUp = Vector3.up;
+
+                addUp *= (float)newIngredient.m_ingredientType;
+
+                newIngredient.transform.parent = transform;
+
+                newIngredient.transform.localPosition = Vector3.zero;
+                newIngredient.transform.position = transform.position + addUp;
+
+                m_ingredientMask |= ingredient.m_ingredientMask;
+            }
+
+
     }
 }
