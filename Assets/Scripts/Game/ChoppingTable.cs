@@ -103,9 +103,4 @@ public class ChoppingTable : MonoBehaviour
         }
     }
 
-    public void OnClick()
-    {
-        Debug.Log("OnClick");
-    }
-
 }

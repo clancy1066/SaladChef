@@ -202,7 +202,21 @@ void CheckAction(MY_GAME_INPUTS gi)
         {
             m_rb.ResetCenterOfMass();
             m_rb.ResetInertiaTensor();
+
+            CorrectAngles();
+            //   m_rb.position = m_model.transform.position;
         }
+    }
+
+    // Mini-hack because of animations
+    void CorrectAngles()
+    {
+        Vector3 localEuler = m_model.transform.eulerAngles;
+
+        localEuler.x = 0.0f;
+        localEuler.z = 0.0f;
+
+        m_model.transform.eulerAngles = localEuler;
     }
 
     bool IsMoving(MY_GAME_INPUTS gi)
@@ -217,6 +231,7 @@ void CheckAction(MY_GAME_INPUTS gi)
         if (HandleNewState())
         {
             FullStop();
+            return;
         }
         if (IsMoving(gi))
             ChangeState(PLAYER_STATE.WALKING);
@@ -243,7 +258,9 @@ void CheckAction(MY_GAME_INPUTS gi)
 
             delta.y = 0.0f;
 
-            m_model.transform.LookAt(delta); 
+            m_model.transform.LookAt(delta);
+
+            CorrectAngles();
         }
 
         CheckAction(gi);
