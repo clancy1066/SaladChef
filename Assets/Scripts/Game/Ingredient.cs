@@ -20,9 +20,9 @@ public class Ingredient : MonoBehaviour
     static Dictionary<INGREDIENT_TYPE, List<Ingredient>> m_spawnLists = new Dictionary<INGREDIENT_TYPE, List<Ingredient>>();
 
     public INGREDIENT_TYPE  m_ingredientType = INGREDIENT_TYPE.INGREDIENT1;
-    public uint   m_ingredientMask;
+    public uint     m_ingredientMask;
     
-    public float                  m_choppingTime;
+    public float    m_choppingTime;
 
     // Need this to shut off collision
     Rigidbody               m_rb;

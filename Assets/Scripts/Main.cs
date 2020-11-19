@@ -30,10 +30,19 @@ public class Main : MonoBehaviour
     public  Transform playerMultStart1;
     public  Transform playerMultStart2;
 
+    // Special FX
+    static public List<Floater> sm_freeFloaters = new List<Floater>();
+    static Floater              m_floaterTemplate;
+
     // Start is called before the first frame update
     void Start()
     {
         allCharacters = GetComponentsInChildren<I_GameCharacter>();
+
+        m_floaterTemplate = GetComponentInChildren<Floater>();
+
+        if (m_floaterTemplate != null)
+            m_floaterTemplate.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -98,6 +107,55 @@ public class Main : MonoBehaviour
         return retVal;
     }
 
+    // **********************************************************
+    // Special effects (Floaters only)
+    // **********************************************************
+    static Floater AllocFloater(string text)
+    {
+        Floater retVal=null;
+
+        if (m_floaterTemplate == null)
+            return retVal;
+
+        if (sm_freeFloaters.Count > 0)
+        {
+            retVal = sm_freeFloaters[0];
+            sm_freeFloaters.RemoveAt(0);
+        }
+        else
+        {
+            retVal = Instantiate(m_floaterTemplate);
+            retVal.AfterInstanceInit();
+        } 
+
+        retVal.SetText(text);
+        retVal.gameObject.SetActive(true);
+
+        return retVal;
+    }
+
+    static public void FreeFloater(Floater floater)
+    {
+        if (floater == null)
+            return;
+
+        floater.gameObject.SetActive(false);
+
+        if (!sm_freeFloaters.Contains(floater))
+            sm_freeFloaters.Add(floater);
+    }
+
+    static public void SendFloater(Vector3 position,float duration=2.0f,string text=null)
+    {
+        Floater floater = AllocFloater(text);
+
+        if (floater != null)
+            floater.Go(position, duration);
+    }
+
+    // **********************************************************
+    // Message Handlers
+    // **********************************************************
     public void OnLevelComplete()
     {
         m_levelComplete = true;

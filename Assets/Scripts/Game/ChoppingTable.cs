@@ -91,10 +91,17 @@ public class ChoppingTable : MonoBehaviour
 
             if (Done())
             {
-              if (Waiter.SubmitPlate(m_currentIngredientsMask))
-                  Debug.Log("Order Complete");
-              else
-                  Debug.Log("Order Failed");
+                if (Waiter.SubmitPlate(m_currentIngredientsMask))
+                {
+                    string floaterText = "Order Complete ";
+
+                    foreach (Ingredient ingredient in m_currentIngredients)
+                        floaterText += (ingredient.m_ingredientType + "\n");
+                
+                    Main.SendFloater(m_ingredientPos.transform.position, 2.0f, floaterText );
+                }       
+                else
+                    Main.SendFloater(m_ingredientPos.transform.position, 2.0f, ("Failed and fed to the dogs"));
 
                 ClearIngredients();
           

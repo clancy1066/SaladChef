@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Waiter : MonoBehaviour
 {
-    static Waiter           _inst;
+  //  static Waiter           _inst;
 
     static List<Customer>   sm_freeCustomers    = new List<Customer>();
     static List<Customer>   sm_waitingCustomers = new List<Customer>();
@@ -16,8 +16,6 @@ public class Waiter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _inst = this;
-
         // Grab all the customer spots
         if (m_allCustomers != null)
             foreach (Customer customer in m_allCustomers)
@@ -66,9 +64,6 @@ public class Waiter : MonoBehaviour
     static public bool  AddOrder (Order newOrder)
     {
         // Bad if somebody jumped the gun
-        if (_inst == null)
-            return false;
-
         if (newOrder == null)
             return false;
 
@@ -88,6 +83,7 @@ public class Waiter : MonoBehaviour
             if (customer.OrderFullFilled(ingredientMask))
             {
                 // Add score
+                Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! "+ customer.GetOrderCost() + " POINTS"));
 
                 // Clear this out
                 customer.Clear();

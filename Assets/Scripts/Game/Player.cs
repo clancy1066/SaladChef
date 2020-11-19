@@ -138,6 +138,8 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         if (newIngredient != null)
         {
+            Main.SendFloater(m_focusIngredient.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
+
             newIngredient.transform.localScale      *= 0.75f;
             newIngredient.transform.localPosition   = Vector3.zero;
             newIngredient.transform.position        = m_model.GetHolder().transform.position;
@@ -145,6 +147,8 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             if (!m_ingredients.Contains(newIngredient))
                 m_ingredients.Add(newIngredient);
+
+         //   Main.SendFloater(m_model.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
         }
     }
 
@@ -160,6 +164,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
+        
             // Always stop
             FullStop();
 

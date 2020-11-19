@@ -33,4 +33,12 @@ public class Customer : MonoBehaviour
 
         order.gameObject.SetActive(true);
     }
+
+    public uint GetOrderCost()
+    {
+        if (m_order != null)
+            return m_order.m_value;
+        
+        return 0;
+    }
 }

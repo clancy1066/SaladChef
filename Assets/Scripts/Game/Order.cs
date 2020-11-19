@@ -6,10 +6,10 @@ public class Order : MonoBehaviour
 {
     List<Ingredient> m_ingredients = new List<Ingredient>();
 
-    uint    m_value ;
-    uint    m_recipeMask;
-    float   m_customerWaitTime;
-    float   m_customerWaitTimeRemaining;
+    public uint     m_value ;
+    uint            m_recipeMask;
+    float           m_customerWaitTime;
+    float           m_customerWaitTimeRemaining;
 
 
     TextMesh m_text;
