@@ -8,4 +8,9 @@ public class AnimEventHandler : MonoBehaviour
     {
         SendMessageUpwards("OnIngredientEvent");
     }
+
+    public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.SetBool("someparameter", false);
+    }
 }

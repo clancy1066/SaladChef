@@ -69,7 +69,7 @@ public struct ST_FEED
 
 public class CJI_INPUT : ScriptableObject
 {
-	static int numButtons	= 32;
+	static int numButtons	= 64;
 	static int numSticks	= 8; 
 	static int numPointers	= 2;
 	static int numFeeds		= 4;

@@ -18,7 +18,7 @@ public class OrderDispatcher : MonoBehaviour
     }
 
     float       m_nextOrderTime     = 3.0f;
-    const int   cm_MAX_INGREDIENTS  = 2;
+    const int   cm_MAX_INGREDIENTS  = 3;
 
     // Start is called before the first frame update
     void Start()

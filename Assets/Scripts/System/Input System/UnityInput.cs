@@ -25,6 +25,7 @@ public class UnityInput : MonoBehaviour,i_NativeInputIFC
 		// Maybe one PC will set this true
 		lastRead.hasHandData = HasIK();
 
+		// Player 1 KBD
 		lastRead.btns[0].isOn = Input.GetKeyDown(KeyCode.F1);
 		lastRead.btns[1].isOn = Input.GetKeyDown(KeyCode.Space);
 		lastRead.btns[2].isOn = Input.GetKeyDown(KeyCode.RightControl);
@@ -35,6 +36,9 @@ public class UnityInput : MonoBehaviour,i_NativeInputIFC
 		lastRead.btns[7].isOn = Input.GetMouseButton(0);
 		lastRead.btns[8].isOn = Input.GetMouseButton(1);
 		lastRead.btns[9].isOn = Input.GetMouseButton(2);
+
+		// Player 2 KBD
+		lastRead.btns[10].isOn = Input.GetKeyDown(KeyCode.RightControl);
 
 		// Arrow keys stick 1
 		lastRead.stickDeltas[0].x 	= lastRead.sticks[0].x;
@@ -51,8 +55,8 @@ public class UnityInput : MonoBehaviour,i_NativeInputIFC
 		lastRead.stickDeltas[1].x 	= lastRead.sticks[1].x;
 		lastRead.stickDeltas[1].y  	= lastRead.sticks[1].y; 
 
-		lastRead.sticks[1].x  		= Input.mousePosition.x; 
-		lastRead.sticks[1].y  		= Input.mousePosition.y;  
+		lastRead.sticks[1].x  		= (Input.GetKey(KeyCode.LeftArrow) ? -1.0f : 0.0f) + (float)(Input.GetKey(KeyCode.RightArrow) ? 1.0f : 0.0f) ; 
+		lastRead.sticks[1].y  		= (Input.GetKey(KeyCode.DownArrow) ? -1.0f : 0.0f) + (float)(Input.GetKey(KeyCode.UpArrow) ? 1.0f : 0.0f);
 
 		lastRead.stickDeltas[1].x  	= lastRead.sticks[1].x - lastRead.stickDeltas[1].x; 
 		lastRead.stickDeltas[1].y  	= lastRead.sticks[1].y - lastRead.stickDeltas[1].y; 

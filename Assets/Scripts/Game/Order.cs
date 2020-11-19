@@ -9,6 +9,8 @@ public class Order : MonoBehaviour
     uint    m_value ;
     uint    m_recipeMask;
     float   m_customerWaitTime;
+    float   m_customerWaitTimeRemaining;
+
 
     TextMesh m_text;
 
@@ -37,10 +39,14 @@ public class Order : MonoBehaviour
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
 
-             newText += (" Value: " + m_value + " Time: " + m_customerWaitTime);
+             newText += ("\nValue: " + m_value + "\nTime: " + m_customerWaitTimeRemaining);
 
             m_text.text = newText;
         }
+
+        if (m_customerWaitTimeRemaining>0)
+            m_customerWaitTimeRemaining -= Time.deltaTime;
+
     }
 
     public void Clear()
@@ -49,6 +55,8 @@ public class Order : MonoBehaviour
 
         foreach (Ingredient ingredient in m_ingredients)
             Ingredient.Release(ingredient);
+
+        m_customerWaitTimeRemaining = m_customerWaitTime;
     }
 
      public bool FullFilled(uint ingredientMask)

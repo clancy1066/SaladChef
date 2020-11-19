@@ -9,6 +9,7 @@ public enum PLAYER_STATE
 ,   WALKING
 ,   TRANSFER
 ,   CHOPPING
+,   WAITIDLE
 
 }
 
@@ -21,6 +22,9 @@ public class Player : MonoBehaviour,I_GameCharacter
     PLAYER_STATE    m_state         = PLAYER_STATE.IDLE;
     bool            m_stateChanged  = false;
 
+    // For score keeper
+    int             sm_playerID;
+
     // 
     PlayerModel     m_model;
     PlayerModel[]   m_models;
@@ -30,8 +34,6 @@ public class Player : MonoBehaviour,I_GameCharacter
     public float    m_moveSpeed = 1.0f;
     public float    m_moveBoost = 1.0f;
     public float    m_turnSpeed = 1.0f;
-
-    int             m_score;
 
     // Hold focus until it is latched by user action
     List<Ingredient>    m_ingredients = new List<Ingredient>();
@@ -112,6 +114,7 @@ public class Player : MonoBehaviour,I_GameCharacter
             switch (m_state)
             {
                 case PLAYER_STATE.IDLE:     DoIdle(m_lastRead); ;   break;
+                case PLAYER_STATE.WAITIDLE: DoWaitIdle(m_lastRead); ; break;
                 case PLAYER_STATE.WALKING:  DoWalking(m_lastRead);  break;
                 case PLAYER_STATE.TRANSFER: DoTransfer(m_lastRead); break;
                 case PLAYER_STATE.CHOPPING: DoChopping(m_lastRead); break;
@@ -145,14 +148,21 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
     }
 
-void CheckAction(MY_GAME_INPUTS gi)
+    void CheckAction(MY_GAME_INPUTS gi)
     {
         if (m_model == null)
+            return;
+
+        // Only allow action when stopped
+        if (m_state != PLAYER_STATE.IDLE)
             return;
 
         // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
+            // Always stop
+            FullStop();
+
             if (m_focusTrashCan!=null)
             {
                 ClearIngredients();
@@ -204,6 +214,7 @@ void CheckAction(MY_GAME_INPUTS gi)
             m_rb.ResetInertiaTensor();
 
             CorrectAngles();
+
             //   m_rb.position = m_model.transform.position;
         }
     }
@@ -238,6 +249,21 @@ void CheckAction(MY_GAME_INPUTS gi)
 
         CheckAction(gi);
     }
+    void DoWaitIdle(MY_GAME_INPUTS gi)
+    {
+        if (HandleNewState())
+        {
+            FullStop();
+            return;
+        }
+        if (IsMoving(gi))
+            return;
+            
+        ChangeState(PLAYER_STATE.IDLE);
+
+        CheckAction(gi);
+    }
+
     void DoWalking(MY_GAME_INPUTS gi)
     {
         HandleNewState();
@@ -262,8 +288,6 @@ void CheckAction(MY_GAME_INPUTS gi)
 
             CorrectAngles();
         }
-
-        CheckAction(gi);
     }
     void DoTransfer(MY_GAME_INPUTS gi)
     {
@@ -282,7 +306,7 @@ void CheckAction(MY_GAME_INPUTS gi)
 
         CaptureIngredient();
 
-        ChangeState(PLAYER_STATE.IDLE);
+        ChangeState(PLAYER_STATE.WAITIDLE);
     }
 
     void DoChopping(MY_GAME_INPUTS gi)

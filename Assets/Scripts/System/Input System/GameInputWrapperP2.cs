@@ -14,9 +14,8 @@ public class GameInputWrapperP2 : GameInputWrapper
 
 		currentInputs = newInputs;
 
-		currentGameInputs.trigger1 			= currentInputs.btns[1].isOn;
-		currentGameInputs.trigger2 			= currentInputs.btns[0].isOn;
-		currentGameInputs.trigger3			= currentInputs.btns[2].isOn;
+		currentGameInputs.trigger1 			= currentInputs.btns[10].isOn;
+		currentGameInputs.trigger2 			= currentInputs.btns[11].isOn;
 
 		currentGameInputs.returnHolorangs   = currentInputs.btns[4].isOn;
 		currentGameInputs.allowRun			= currentInputs.btns[4].isOn;
@@ -34,7 +33,7 @@ public class GameInputWrapperP2 : GameInputWrapper
 		currentGameInputs.camRotDeltaX 		= currentInputs.stickDeltas[1].x;
 		currentGameInputs.camRotDeltaY 		= currentInputs.stickDeltas[1].y;
 
-		currentGameInputs.moveDirs			= currentInputs.sticks[0].vVal;
+		currentGameInputs.moveDirs			= currentInputs.sticks[1].vVal;
 		currentGameInputs.turnDirs			= currentInputs.sticks[1].vVal;
 
 		currentGameInputs.rHandPos			= currentInputs.pointers[0].vPos;

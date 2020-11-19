@@ -9,6 +9,7 @@ public enum GAME_STATE
 ,   GAME
 };
 
+
 public class Main : MonoBehaviour
 {
     MY_GAME_INPUTS lastRead;
