@@ -21,6 +21,9 @@ public class Ingredient : MonoBehaviour
 
     public INGREDIENT_TYPE  m_ingredientType = INGREDIENT_TYPE.INGREDIENT1;
     public uint     m_ingredientMask;
+
+    // Label above 
+    TextMesh        m_description;
     
     public float    m_choppingTime;
 
@@ -44,6 +47,16 @@ public class Ingredient : MonoBehaviour
         m_ingredientMask = (uint)(1 << (int)m_ingredientType);
 
         m_rb = GetComponentInChildren<Rigidbody>();
+
+        m_description = GetComponentInChildren<TextMesh>();
+
+        if (m_description != null)
+        {
+            string descriptionText = (1+(int)m_ingredientType).ToString();
+
+            m_description.text = descriptionText;
+        }
+
     }
 
     public void ActivateCollision(bool onOrOff)

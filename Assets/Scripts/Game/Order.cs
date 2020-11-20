@@ -6,7 +6,7 @@ public class Order : MonoBehaviour
 {
     List<Ingredient> m_ingredients = new List<Ingredient>();
 
-    public uint     m_value ;
+    public uint     m_value;
     uint            m_recipeMask;
     float           m_customerWaitTime;
     float           m_customerWaitTimeRemaining;
@@ -28,23 +28,24 @@ public class Order : MonoBehaviour
     {
         if (m_text)
         {
-            string newText = ("Order: ");
+            string newText = ("");
 
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) newText += "1_";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) newText += "2_";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) newText += "3_";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) newText += "4_"; ;
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) newText += "5_";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) newText += "6_"; ;
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
-            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) ==Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
-
-             newText += ("\nValue: " + m_value + "\nTime: " + m_customerWaitTimeRemaining);
+            /*
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT1)) newText += "1_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT2)) newText += "2_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT3)) newText += "3_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT4)) newText += "4_"; ;
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT5)) newText += "5_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT6)) newText += "6_"; ;
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
+            if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
+            */
+            newText += ("\nValue: " + m_value + "\nTime: " + m_customerWaitTimeRemaining);
 
             m_text.text = newText;
         }
 
-        if (m_customerWaitTimeRemaining>0)
+        if (m_customerWaitTimeRemaining > 0)
             m_customerWaitTimeRemaining -= Time.deltaTime;
 
     }

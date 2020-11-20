@@ -27,10 +27,8 @@ public class OrderDispatcher : MonoBehaviour
 
         if (m_orderTemplate != null)
             m_orderTemplate.gameObject.SetActive(false);
-
-        // Used to create new orders
-        GatherIngredients();
     }
+
 
     void GatherIngredients()
     {
@@ -107,11 +105,15 @@ public class OrderDispatcher : MonoBehaviour
         if (sm_ingredients.Count < 1)
             return;
 
-        for (int i=0;i<cm_MAX_INGREDIENTS;i++)
-        {
-            int index = Random.Range(0, 100) % sm_ingredients.Count;
+        // Ugly but works
+        foreach (Ingredient ingredient in sm_ingredients)
+            m_ingredientsTMP.Add(ingredient);
 
-            m_ingredientsTMP.Add(sm_ingredients[index]);
+        while (m_ingredientsTMP.Count> cm_MAX_INGREDIENTS)
+        {
+            int index = Random.Range(0, 100) % m_ingredientsTMP.Count;
+
+            m_ingredientsTMP.RemoveAt(index);
         }
 
     }

@@ -22,6 +22,9 @@ public class Player : MonoBehaviour,I_GameCharacter
     PLAYER_STATE    m_state         = PLAYER_STATE.IDLE;
     bool            m_stateChanged  = false;
 
+    // So objects can tell which player is using them
+    public PLAYER_ID m_playerID = PLAYER_ID.ANYONE;
+
     // For score keeper
     int             sm_playerID;
 
@@ -357,9 +360,12 @@ public class Player : MonoBehaviour,I_GameCharacter
     // Player near a chopping table
     public void OnFoundChoppingTable(ChoppingTable choppingTable)
     {
-        Debug.Log("OnFoundTable");
-
-       m_focusChoppingTable = choppingTable;
+        if (choppingTable.m_playerID == PLAYER_ID.ANYONE || choppingTable.m_playerID == m_playerID)
+        {
+            Debug.Log("OnFoundTable");
+            Main.SendFloater(choppingTable.transform.position+Vector3.up, 2.0f, ("Your chopping table"));
+            m_focusChoppingTable = choppingTable;
+        }
     }
 
     public void OnClearChoppingTable(ChoppingTable choppingTable)

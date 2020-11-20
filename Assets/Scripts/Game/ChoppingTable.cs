@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class ChoppingTable : MonoBehaviour
 {
-   // Placment
+    // Which player can use this
+    public PLAYER_ID m_playerID = PLAYER_ID.ANYONE;
+
+    // Placement
     public Transform    m_playerPos;
     public Transform    m_ingredientPos;
 

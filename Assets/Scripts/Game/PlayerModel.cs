@@ -2,6 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PLAYER_ID
+{
+    ANYONE
+,   PLAYER1
+,   PLAYER2
+,   PLAYER3
+,   PLAYER4
+,   PLAYER5
+};
+
 public class PlayerModel : MonoBehaviour
 {
     [SerializeField]
