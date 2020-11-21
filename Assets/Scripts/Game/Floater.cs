@@ -13,6 +13,8 @@ public class Floater : MonoBehaviour
 
     bool      m_run = false;
 
+    public AnimationCurve   m_alphaFade;
+
     private void Start()
     {
         AfterInstanceInit();
@@ -61,7 +63,7 @@ public class Floater : MonoBehaviour
             {
                 color = material.color;
                 
-                color.a = alpha;
+                color.a = m_alphaFade.Evaluate(alpha);
                 
                 material.color = color;
             }

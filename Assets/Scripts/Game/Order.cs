@@ -10,6 +10,7 @@ public class Order : MonoBehaviour
     uint            m_recipeMask;
     float           m_customerWaitTime;
     float           m_customerWaitTimeRemaining;
+    bool m_run      = false;
 
 
     TextMesh m_text;
@@ -21,11 +22,17 @@ public class Order : MonoBehaviour
     void Start()
     {
         m_text = GetComponentInChildren<TextMesh>();
+
+        m_run = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!m_run)
+        {
+
+        }
         if (m_text)
         {
             string newText = ("");
@@ -40,7 +47,12 @@ public class Order : MonoBehaviour
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
             */
-            newText += ("\nValue: " + m_value + "\nTime: " + m_customerWaitTimeRemaining);
+            newText += ("\nValue: " + m_value);
+
+            int minutes = (int)((m_customerWaitTimeRemaining + 0.5f) / 60.0f);
+            int seconds = (int)m_customerWaitTimeRemaining % 60;
+
+            newText += ("Time:\t"+ minutes.ToString() + ":" + seconds.ToString());
 
             m_text.text = newText;
         }
@@ -48,6 +60,13 @@ public class Order : MonoBehaviour
         if (m_customerWaitTimeRemaining > 0)
             m_customerWaitTimeRemaining -= Time.deltaTime;
 
+    }
+
+    public void Go()
+    {
+        m_run = true;
+
+        m_customerWaitTimeRemaining = m_customerWaitTime;
     }
 
     public void Clear()
@@ -90,7 +109,7 @@ public class Order : MonoBehaviour
 
                 newIngredient.transform.localPosition = Vector3.zero;
                 newIngredient.transform.position = transform.position+ 0.25f*offset;
-                newIngredient.transform.rotation = transform.rotation;
+               // newIngredient.transform.rotation = transform.rotation;
 
                 m_recipeMask |= ingredient.m_ingredientMask;
             }

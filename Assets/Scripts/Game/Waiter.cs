@@ -77,21 +77,25 @@ public class Waiter : MonoBehaviour
         return true;
     }
     
-    static public bool SubmitPlate(uint ingredientMask)
+    static public uint SubmitPlate(PLAYER_ID playerID,uint ingredientMask)
     {
+        uint retVal = 0;
+
         foreach (Customer customer in sm_waitingCustomers)
             if (customer.OrderFullFilled(ingredientMask))
             {
                 // Add score
                 Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! "+ customer.GetOrderCost() + " POINTS"));
 
+                retVal =  customer.GetOrderCost();
+
                 // Clear this out
                 customer.Clear();
 
                 FreeCustomer(customer);
 
-                return true;
+                return retVal;
             }
-        return false;
+        return retVal;
     }
 }

@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PLAYER_ID
+{
+  ANYONE = 0
+, PLAYER1
+, PLAYER2
+, PLAYER3
+, PLAYER4
+, MAX
+};
 // Mainly for controlling the animations
 public enum PLAYER_STATE
 {
@@ -13,10 +22,43 @@ public enum PLAYER_STATE
 
 }
 
+public struct PLAYER_SCORE
+{
+    public PLAYER_ID    m_playerID;
+    public uint         m_value;
+    public float        m_timeBonus;
+
+    public void Set(PLAYER_ID newID, uint newValue,float timeBonus=0.0f)
+    {
+        m_playerID      = newID;
+        m_value         = newValue;
+        m_timeBonus     = timeBonus;
+    }
+};
+
+public class PLAYER_VITALS
+{
+    public string   m_name  = "NoName";
+    public uint     m_score = 0;
+    public float    m_timer = 300.0f;
+
+    public void SetName(string name)
+    {
+        m_name = name;
+    }
+
+    public void AddScore(PLAYER_SCORE score)
+    {
+        m_score += score.m_value;
+        m_timer += score.m_timeBonus;
+    }
+};
+
+
 public class Player : MonoBehaviour,I_GameCharacter
 {
     // Animation signals
-
+    const string ANIM_PlayerState = "PlayerState";
 
     [SerializeField]
     PLAYER_STATE    m_state         = PLAYER_STATE.IDLE;
@@ -27,6 +69,8 @@ public class Player : MonoBehaviour,I_GameCharacter
 
     // For score keeper
     int             sm_playerID;
+    PLAYER_VITALS m_playerVitals = new PLAYER_VITALS();
+
 
     // 
     PlayerModel     m_model;
@@ -103,10 +147,9 @@ public class Player : MonoBehaviour,I_GameCharacter
         {
             Debug.Log("Anim State: " + (int)m_state);
 
-            m_animator.SetInteger("PlayerState", (int)m_state);
+            m_animator.SetInteger(ANIM_PlayerState, (int)m_state);
         }
     }
-
 
     public void Execute() 
     {     
@@ -116,8 +159,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             switch (m_state)
             {
-                case PLAYER_STATE.IDLE:     DoIdle(m_lastRead); ;   break;
-                case PLAYER_STATE.WAITIDLE: DoWaitIdle(m_lastRead); ; break;
+                case PLAYER_STATE.IDLE:     DoIdle(m_lastRead);     break;
                 case PLAYER_STATE.WALKING:  DoWalking(m_lastRead);  break;
                 case PLAYER_STATE.TRANSFER: DoTransfer(m_lastRead); break;
                 case PLAYER_STATE.CHOPPING: DoChopping(m_lastRead); break;
@@ -125,6 +167,8 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
 
         Debug.DrawLine(m_model.transform.position, m_model.transform.position + Vector3.up * 2.0f);
+
+        m_playerVitals.m_timer -= Time.deltaTime;
     }
 
     void ClearIngredients()
@@ -164,6 +208,10 @@ public class Player : MonoBehaviour,I_GameCharacter
         if (m_state != PLAYER_STATE.IDLE)
             return;
 
+        // No model
+        if (m_model == null)
+            return;
+
         // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
@@ -184,13 +232,12 @@ public class Player : MonoBehaviour,I_GameCharacter
                 {
                     // If I have an ingredient and a table, drop it on the table
                     m_focusChoppingTable.AddIngredients(m_ingredients);
+                    ClearIngredients();
                 }
-
-                // Always after an action 
-                ClearIngredients();
-
+                else
+                    Main.SendFloater(m_model.transform.position + Vector3.up, 3.0f, ("Inventory Full"));
             }
-            // No ingredient
+            // Can carry more ingredients
             else
             {
                 if (m_focusIngredient != null)
@@ -210,7 +257,6 @@ public class Player : MonoBehaviour,I_GameCharacter
                     }
                 }
             }
-           
         }
     }
 
@@ -227,6 +273,13 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
     }
 
+    public void AddScore(PLAYER_SCORE score)
+    {
+        m_playerVitals.AddScore(score);
+    }
+
+    public PLAYER_VITALS GetVitals() { return m_playerVitals; }
+        
     // Mini-hack because of animations
     void CorrectAngles()
     {
@@ -245,6 +298,9 @@ public class Player : MonoBehaviour,I_GameCharacter
         return moveMag > 0.001f;
     }
 
+    // ***************************************************
+    // Player state machine
+    // ***************************************************
     void DoIdle(MY_GAME_INPUTS gi)
     {
         if (HandleNewState())
@@ -257,21 +313,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         CheckAction(gi);
     }
-    void DoWaitIdle(MY_GAME_INPUTS gi)
-    {
-        if (HandleNewState())
-        {
-            FullStop();
-            return;
-        }
-        if (IsMoving(gi))
-            return;
-            
-        ChangeState(PLAYER_STATE.IDLE);
-
-        CheckAction(gi);
-    }
-
+    
     void DoWalking(MY_GAME_INPUTS gi)
     {
         HandleNewState();
@@ -314,7 +356,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         CaptureIngredient();
 
-        ChangeState(PLAYER_STATE.WAITIDLE);
+        ChangeState(PLAYER_STATE.IDLE);
     }
 
     void DoChopping(MY_GAME_INPUTS gi)
@@ -397,4 +439,5 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         Debug.Log("OnIngredientEvent");
     }
+
 }

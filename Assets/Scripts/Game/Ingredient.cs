@@ -20,15 +20,16 @@ public class Ingredient : MonoBehaviour
     static Dictionary<INGREDIENT_TYPE, List<Ingredient>> m_spawnLists = new Dictionary<INGREDIENT_TYPE, List<Ingredient>>();
 
     public INGREDIENT_TYPE  m_ingredientType = INGREDIENT_TYPE.INGREDIENT1;
-    public uint     m_ingredientMask;
-
-    // Label above 
-    TextMesh        m_description;
+    public uint         m_ingredientMask;
     
-    public float    m_choppingTime;
+    public float        m_choppingTime;
+
+    // Appearence
+    ColorSetter         m_colorSetter;
+    Renderer            m_renderer;
 
     // Need this to shut off collision
-    Rigidbody               m_rb;
+    Rigidbody            m_rb;
 
     private void Start()
     {
@@ -43,20 +44,25 @@ public class Ingredient : MonoBehaviour
             m_spawnLists[m_ingredientType].Add(this);
         }
 
+
+        // Grab the renderer
+        m_renderer = GetComponentInChildren<Renderer>();
+
+        // For setting the color
+        m_colorSetter = GetComponentInChildren<ColorSetter>();
+
         // Used for fast lookup of orders
         m_ingredientMask = (uint)(1 << (int)m_ingredientType);
 
         m_rb = GetComponentInChildren<Rigidbody>();
 
-        m_description = GetComponentInChildren<TextMesh>();
+        ChangeColor();
+    }
 
-        if (m_description != null)
-        {
-            string descriptionText = (1+(int)m_ingredientType).ToString();
-
-            m_description.text = descriptionText;
-        }
-
+    void ChangeColor()
+    {
+        if (m_colorSetter != null)
+            m_colorSetter.SetColor(m_renderer);    
     }
 
     public void ActivateCollision(bool onOrOff)

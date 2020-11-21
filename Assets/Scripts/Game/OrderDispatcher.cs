@@ -132,12 +132,14 @@ public class OrderDispatcher : MonoBehaviour
 
                 ConstructRandomIngredientList();
 
-                Order newOrder = CreateOrder(5.0f, 1, m_ingredientsTMP);
+                Order newOrder = CreateOrder(Random.Range(30.0f,120f), (uint)Random.Range(1,10), m_ingredientsTMP);
 
                 if (!Waiter.AddOrder(newOrder))
                 {
                     FreeOrder(newOrder);
                 }
+                else
+                    newOrder.Go();
             }
 
             m_nextOrderTime = Random.Range(5.0f, 10.0f);

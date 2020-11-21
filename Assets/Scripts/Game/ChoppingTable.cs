@@ -13,9 +13,12 @@ public class ChoppingTable : MonoBehaviour
 
     List<Ingredient>    m_currentIngredients;
     uint                m_currentIngredientsMask;
-
+    
     float               m_chopTimer;
     bool                m_doRun = false;
+
+    // To Avoid the use of "new"
+    PLAYER_SCORE m_scorePacket = new PLAYER_SCORE();
 
     void Start()
     {
@@ -43,8 +46,7 @@ public class ChoppingTable : MonoBehaviour
 
             newIngredient.transform.localPosition  = Vector3.zero;
             newIngredient.transform.position       = parentTransform.position;
-            newIngredient.transform.rotation       = parentTransform.rotation;
-
+    
             newIngredient.transform.SetParent(parentTransform);
 
             m_chopTimer += (newIngredient != null ? newIngredient.m_choppingTime : 0.0f);
@@ -94,8 +96,14 @@ public class ChoppingTable : MonoBehaviour
 
             if (Done())
             {
-                if (Waiter.SubmitPlate(m_currentIngredientsMask))
+                uint pointsToAdd = Waiter.SubmitPlate(m_playerID, m_currentIngredientsMask);
+                
+                if (pointsToAdd>=0)
                 {
+                    m_scorePacket.Set(m_playerID, pointsToAdd);
+
+                    SendMessageUpwards("OnPlayerScored", m_scorePacket);
+
                     string floaterText = "Order Complete ";
 
                     foreach (Ingredient ingredient in m_currentIngredients)

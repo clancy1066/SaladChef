@@ -9,15 +9,16 @@ public enum GAME_STATE
 ,   GAME
 };
 
-
 public class Main : MonoBehaviour
 {
-    MY_GAME_INPUTS lastRead;
-    I_GameCharacter[] allCharacters;
-    Player thePlayer;
+    Dictionary<PLAYER_ID,Player>    m_playersMap = new Dictionary<PLAYER_ID, Player>();
+    List<Player>                    m_playersList      = new List<Player>();
 
     public Transform m_startScreen;
     public Transform m_gameScreen;
+
+    // Score Keeper
+    ScoreKeeper      m_scoreKeeper;
 
     GAME_STATE m_gameState  = GAME_STATE.INIT;
     bool m_gameStateChanged = false;
@@ -37,12 +38,25 @@ public class Main : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        allCharacters = GetComponentsInChildren<I_GameCharacter>();
+        Player[] allCharacters = GetComponentsInChildren<Player>();
 
-        m_floaterTemplate = GetComponentInChildren<Floater>();
+        foreach (Player player in allCharacters)
+        {
+            m_playersMap[player.m_playerID] = player;
+            m_playersList.Add(player);
+        }
 
-        if (m_floaterTemplate != null)
+        m_floaterTemplate   = GetComponentInChildren<Floater>();
+        m_scoreKeeper       = GetComponentInChildren<ScoreKeeper>();
+
+        if (m_floaterTemplate != null)  
             m_floaterTemplate.gameObject.SetActive(false);
+        
+        if (m_scoreKeeper != null)      
+            m_scoreKeeper.gameObject.SetActive(false);
+       
+        ActivateLevel(m_startScreen, false);
+        ActivateLevel(m_gameScreen, false);
     }
 
     // Update is called once per frame
@@ -58,12 +72,17 @@ public class Main : MonoBehaviour
 
     void UpdateInit()
     {
-       ChangeState(GAME_STATE.START);
+        if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(false);
+        
+        ActivateLevel(m_startScreen, false);
+        ActivateLevel(m_gameScreen, false);
+        ChangeState(GAME_STATE.START);
     }
     void UpdateStart()
     {
         if (HandleStateChanged())
         {
+            m_levelComplete = false;
             ActivateLevel(m_startScreen, true);
             ActivateLevel(m_gameScreen, false);
         }
@@ -75,20 +94,41 @@ public class Main : MonoBehaviour
     {
         if (HandleStateChanged())
         {
+            if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(true);
+
             ActivateLevel(m_startScreen, false);
             ActivateLevel(m_gameScreen, true);
 
             SetupPlayers();
         }
 
-        if (allCharacters != null)
-        foreach (I_GameCharacter gc in allCharacters)
-           gc.Execute();
+        // Just execute them
+        foreach(Player player in m_playersList)
+           player.Execute();
+
+        UpdateUI();
+    }
+
+    void ActivateLevel(Transform screen, bool onOrOff)
+    {
+        if (screen != null)
+            screen.gameObject.SetActive(onOrOff);
     }
 
     void SetupPlayers()
     {
 
+    }
+
+    void UpdateUI()
+    {
+        for(PLAYER_ID iter=PLAYER_ID.PLAYER1;iter<PLAYER_ID.MAX;iter++)
+        {
+            Player player = (m_playersMap.ContainsKey(iter) ? m_playersMap[iter] : null);
+
+            if (player != null)
+                m_scoreKeeper.SetScore(iter, player.GetVitals());
+        }
     }
 
     void ChangeState(GAME_STATE newState)
@@ -171,9 +211,11 @@ public class Main : MonoBehaviour
         m_isTwoPlayerGame = true;
     }
 
-    void ActivateLevel(Transform screen, bool onOrOff)
+    public void OnPlayerScored(PLAYER_SCORE score)
     {
-        if (screen != null)
-            screen.gameObject.SetActive(onOrOff);
+        Player player = (m_playersMap.ContainsKey(score.m_playerID) ? m_playersMap[score.m_playerID]:null);
+
+        if (player != null)
+            player.AddScore(score);
     }
 }
