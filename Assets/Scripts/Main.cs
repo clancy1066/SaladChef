@@ -11,6 +11,9 @@ public enum GAME_STATE
 
 public class Main : MonoBehaviour
 {
+    // Not a great practice
+    static Main _inst;
+
     Dictionary<PLAYER_ID,Player>    m_playersMap = new Dictionary<PLAYER_ID, Player>();
     List<Player>                    m_playersList      = new List<Player>();
 
@@ -20,6 +23,7 @@ public class Main : MonoBehaviour
     // Score Keeper
     ScoreKeeper      m_scoreKeeper;
 
+    // State machine management
     GAME_STATE m_gameState  = GAME_STATE.INIT;
     bool m_gameStateChanged = false;
     bool m_levelComplete    = false;
@@ -35,9 +39,14 @@ public class Main : MonoBehaviour
     static public List<Floater> sm_freeFloaters = new List<Floater>();
     static Floater              m_floaterTemplate;
 
+    // Audio
+    static AudioSystem          m_audioSystem;
+
     // Start is called before the first frame update
     void Start()
     {
+        _inst = this;
+
         Player[] allCharacters = GetComponentsInChildren<Player>();
 
         foreach (Player player in allCharacters)
@@ -48,13 +57,14 @@ public class Main : MonoBehaviour
 
         m_floaterTemplate   = GetComponentInChildren<Floater>();
         m_scoreKeeper       = GetComponentInChildren<ScoreKeeper>();
+        m_audioSystem       = GetComponentInChildren<AudioSystem>();
 
         if (m_floaterTemplate != null)  
             m_floaterTemplate.gameObject.SetActive(false);
         
         if (m_scoreKeeper != null)      
             m_scoreKeeper.gameObject.SetActive(false);
-       
+
         ActivateLevel(m_startScreen, false);
         ActivateLevel(m_gameScreen, false);
     }
@@ -228,5 +238,46 @@ public class Main : MonoBehaviour
             if (player != null)
                 player.AddScore(score);
         }
+    }
+
+    // ******************************************
+    // Audio System Helpers
+    
+
+    // Dedicated functions. Wrong but fine for this
+    static public void AUDIO_Info()
+    {
+        if (m_audioSystem != null) m_audioSystem.Info();
+    }
+
+    static public void AUDIO_Pickup()
+    {
+        if (m_audioSystem != null) m_audioSystem.Pickup();
+    }
+
+    static public void AUDIO_PutDown()
+    {
+        if (m_audioSystem != null) m_audioSystem.PutDown();
+    }
+
+    static public void AUDIO_Wrong()
+    {
+        if (m_audioSystem != null) m_audioSystem.Wrong();
+    }
+
+
+    static public void AUDIO_Success()
+    {
+        if (m_audioSystem != null) m_audioSystem.Success();
+    }
+
+    static public void AUDIO_Fail()
+    {
+        if (m_audioSystem != null) m_audioSystem.Fail();
+    }
+
+    static public void AUDIO_Chopping(bool onOrOff)
+    {
+        if (m_audioSystem != null) m_audioSystem.Chopping(onOrOff);
     }
 }

@@ -168,7 +168,11 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         Debug.DrawLine(m_model.transform.position, m_model.transform.position + Vector3.up * 2.0f);
 
-        m_playerVitals.m_timer -= Time.deltaTime;
+        if (m_playerVitals.m_timer >= 0.0f)
+            m_playerVitals.m_timer -= Time.deltaTime;
+        else
+            m_playerVitals.m_timer = 0.0f;
+
     }
 
     void ClearIngredients()
@@ -185,6 +189,8 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         if (newIngredient != null)
         {
+            Main.AUDIO_Pickup();
+
             Main.SendFloater(m_focusIngredient.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
 
             newIngredient.transform.localScale      *= 0.75f;
@@ -215,12 +221,12 @@ public class Player : MonoBehaviour,I_GameCharacter
         // User is calling for an action - Find the context and trigger it
         if (gi.trigger1)
         {
-        
             // Always stop
             FullStop();
 
             if (m_focusTrashCan!=null)
             {
+                Main.AUDIO_PutDown();
                 ClearIngredients();
                 return;
             }
@@ -232,6 +238,7 @@ public class Player : MonoBehaviour,I_GameCharacter
                 {
                     // If I have an ingredient and a table, drop it on the table
                     m_focusChoppingTable.AddIngredients(m_ingredients);
+                    
                     ClearIngredients();
                 }
                 else
@@ -370,6 +377,8 @@ public class Player : MonoBehaviour,I_GameCharacter
                 m_model.transform.position = newPos.position;
                 m_model.transform.rotation = newPos.rotation;
 
+                Main.AUDIO_Chopping(true);
+
                 FullStop();
 
                 m_focusChoppingTable.Run();
@@ -379,6 +388,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         if (m_focusChoppingTable==null || m_focusChoppingTable.Done())
         {
+            Main.AUDIO_Chopping(false);
             ChangeState(PLAYER_STATE.IDLE);
         }
     }
@@ -405,6 +415,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         if (choppingTable.m_playerID == PLAYER_ID.ANYONE || choppingTable.m_playerID == m_playerID)
         {
             Debug.Log("OnFoundTable");
+            Main.AUDIO_Info();
             Main.SendFloater(choppingTable.transform.position+Vector3.up, 2.0f, ("Your chopping table"));
             m_focusChoppingTable = choppingTable;
         }

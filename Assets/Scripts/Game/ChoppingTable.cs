@@ -35,6 +35,8 @@ public class ChoppingTable : MonoBehaviour
         if (ingredients == null || ingredients.Count<1)
             return;
 
+        Main.AUDIO_PutDown();
+
         foreach (Ingredient ingredient in ingredients)
         {
             Ingredient newIngredient = Ingredient.Grab(ingredient.m_ingredientType);

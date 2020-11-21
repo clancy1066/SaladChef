@@ -59,6 +59,7 @@ public class Waiter : MonoBehaviour
             if (customer.OrderExpired())
             {
                 Main.SendFloater(customer.transform.position, 3.0f, ("You guys suck! "));
+                Main.AUDIO_Fail();
 
                 m_scorePacket.Set(PLAYER_ID.ANYONE,-customer.GetOrderCost(),-customer.GetOrderWaittime());
 
@@ -115,6 +116,7 @@ public class Waiter : MonoBehaviour
             {
                 // Add score
                 Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! "+ customer.GetOrderCost() + " POINTS"));
+                Main.AUDIO_Success();
 
                 retVal =  customer.GetOrderCost();
 

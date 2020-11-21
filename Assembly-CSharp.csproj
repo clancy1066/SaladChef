@@ -59,8 +59,10 @@
     <Compile Include="Assets\Scripts\UI\Button.cs" />
     <Compile Include="Assets\Scripts\Game\AnimEventHandler.cs" />
     <Compile Include="Assets\Scripts\Game\Waiter.cs" />
+    <Compile Include="Assets\Scripts\UI\ScoreKeeper.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
+    <Compile Include="Assets\Scripts\UI\ColorSetter.cs" />
     <Compile Include="Assets\Scripts\Game\PlayerModel.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\System\Input System\GameInputWrapperP2.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+    <Compile Include="Assets\Scripts\Game\Facer.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
@@ -110,12 +113,10 @@
     <Compile Include="Assets\Scripts\UI\HUD.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
+    <Compile Include="Assets\Scripts\UI\PlayerScoreUI.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Game\TrashCan.cs" />
-    <Compile Include="Assets\Scripts\Game\Facer.cs" />
-    <Compile Include="Assets\Scripts\UI\ColorSetter.cs" />
-    <Compile Include="Assets\Scripts\UI\ScoreKeeper.cs" />
-    <Compile Include="Assets\Scripts\UI\PlayerScoreUI.cs" />
+    <Compile Include="Assets\Scripts\System\Audio\AudioSystem.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
