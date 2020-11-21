@@ -12,12 +12,6 @@ public class Order : MonoBehaviour
     float           m_customerWaitTimeRemaining;
     bool m_run      = false;
 
-    public float GetCustomerWaittime()
-    {
-        return m_customerWaitTime;
-    }
-
-
     TextMesh m_text;
 
     // Offsets for placing ingredients
@@ -69,6 +63,8 @@ public class Order : MonoBehaviour
         m_run = true;
 
         m_customerWaitTimeRemaining = m_customerWaitTime;
+
+        Main.AUDIO_Info();
     }
 
     public void Clear()
@@ -80,6 +76,16 @@ public class Order : MonoBehaviour
 
         m_customerWaitTimeRemaining = m_customerWaitTime;
     }
+    public float GetCustomerWaitTime()
+    {
+        return m_customerWaitTimeRemaining;
+    }
+
+    public float GetRemainingWaitTime()
+    {
+        return m_customerWaitTime;
+    }
+
     public bool Expired()
     {
         return (m_customerWaitTimeRemaining<=0);

@@ -17,6 +17,9 @@ public class ColorSetter : MonoBehaviour
         {
             Renderer renderer = transform.gameObject.GetComponentInChildren<Renderer>();
 
+            if (renderer==null && transform.parent!=null)
+                renderer = transform.parent.gameObject.GetComponentInChildren<Renderer>();
+
             SetColor(renderer);
         }
     }

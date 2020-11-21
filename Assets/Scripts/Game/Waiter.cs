@@ -116,9 +116,15 @@ public class Waiter : MonoBehaviour
             {
                 // Add score
                 Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! "+ customer.GetOrderCost() + " POINTS"));
+
                 Main.AUDIO_Success();
 
                 retVal =  customer.GetOrderCost();
+
+
+                m_scorePacket.Set(playerID, retVal,customer.GetRemainingWaitTime());
+
+                customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
 
                 // Clear this out
                 customer.Clear();

@@ -53,9 +53,19 @@ public class Customer : MonoBehaviour
     public  float GetOrderWaittime()
     {
         if (m_order != null)
-            return m_order.GetCustomerWaittime();
+            return m_order.GetCustomerWaitTime();
 
         return 0;
     }
+
+    public float GetRemainingWaitTime()
+    {
+        if (m_order != null)
+            return m_order.GetRemainingWaitTime();
+
+        return 0;
+    }
+
+    
 
 }

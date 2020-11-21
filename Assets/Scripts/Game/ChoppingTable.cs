@@ -102,10 +102,7 @@ public class ChoppingTable : MonoBehaviour
                 
                 if (pointsToAdd>=0)
                 {
-                    m_scorePacket.Set(m_playerID, pointsToAdd);
-
-                    SendMessageUpwards("OnPlayerScored", m_scorePacket);
-
+                  
                     string floaterText = "Order Complete ";
 
                     foreach (Ingredient ingredient in m_currentIngredients)

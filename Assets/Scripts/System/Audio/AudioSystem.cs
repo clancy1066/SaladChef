@@ -96,4 +96,16 @@ public class AudioSystem : MonoBehaviour
     {
         TryPlay(m_chopping,onOrOff);
     }
+
+    public void Track1(bool onOrOff)
+    {
+        TryPlay(m_track1, onOrOff);
+        TryPlay(m_track2, false);
+    }
+
+    public void Track2(bool onOrOff)
+    {
+        TryPlay(m_track2, onOrOff);
+        TryPlay(m_track1, false);
+    }
 }

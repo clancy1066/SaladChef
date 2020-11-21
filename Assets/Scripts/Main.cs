@@ -89,13 +89,18 @@ public class Main : MonoBehaviour
     {
         if (HandleStateChanged())
         {
+            AUDIO_Track1(true);
+           
             m_levelComplete = false;
             ActivateLevel(m_startScreen, true);
             ActivateLevel(m_gameScreen, false);
         }
 
         if (m_levelComplete)
+        {
+            AUDIO_Track1(false);
             ChangeState(GAME_STATE.GAME);
+        }
     }
     void UpdateGame()
     {
@@ -107,10 +112,13 @@ public class Main : MonoBehaviour
             ActivateLevel(m_gameScreen, true);
 
             SetupPlayers();
+
+            AUDIO_Track2(true);
+
         }
 
         // Just execute them
-        foreach(Player player in m_playersList)
+        foreach (Player player in m_playersList)
            player.Execute();
 
         Waiter.UpdateCustomers();
@@ -295,5 +303,15 @@ public class Main : MonoBehaviour
     static public void AUDIO_Chopping(bool onOrOff)
     {
         if (m_audioSystem != null) m_audioSystem.Chopping(onOrOff);
+    }
+
+    static public void AUDIO_Track1(bool onOrOff)
+    {
+        if (m_audioSystem != null) m_audioSystem.Track1(onOrOff);
+    }
+
+    static public void AUDIO_Track2(bool onOrOff)
+    {
+        if (m_audioSystem != null) m_audioSystem.Track2(onOrOff);
     }
 }
