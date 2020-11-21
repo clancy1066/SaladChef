@@ -93,6 +93,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
     <Compile Include="Assets\Scripts\System\Input System\i_NativeInputIFC.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
+    <Compile Include="Assets\Scripts\Game\Floater.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
@@ -111,7 +112,10 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Game\TrashCan.cs" />
-    <Compile Include="Assets\Scripts\Game\Floater.cs" />
+    <Compile Include="Assets\Scripts\Game\Facer.cs" />
+    <Compile Include="Assets\Scripts\UI\ColorSetter.cs" />
+    <Compile Include="Assets\Scripts\UI\ScoreKeeper.cs" />
+    <Compile Include="Assets\Scripts\UI\PlayerScoreUI.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
