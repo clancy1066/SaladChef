@@ -38,7 +38,7 @@ public struct PLAYER_SCORE
 
 public class PLAYER_VITALS
 {
-    public string   m_name  = "NoName";
+    public string   m_name  = "No Name";
     public int      m_score = 0;
     public float    m_timer = 300.0f;
 

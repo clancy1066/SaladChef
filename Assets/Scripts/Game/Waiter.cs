@@ -124,6 +124,8 @@ public class Waiter : MonoBehaviour
                 customer.Clear();
 
                 sm_leavingCustomers.Add(customer);
+
+                break;
             }
 
         RemoveCustomers();

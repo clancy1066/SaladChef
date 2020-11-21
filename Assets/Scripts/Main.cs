@@ -62,9 +62,6 @@ public class Main : MonoBehaviour
         if (m_floaterTemplate != null)  
             m_floaterTemplate.gameObject.SetActive(false);
         
-        if (m_scoreKeeper != null)      
-            m_scoreKeeper.gameObject.SetActive(false);
-
         ActivateLevel(m_startScreen, false);
         ActivateLevel(m_gameScreen, false);
     }
@@ -130,6 +127,27 @@ public class Main : MonoBehaviour
     void SetupPlayers()
     {
 
+    }
+
+    void ChangePlayerName(PLAYER_ID playerID,string newName)
+    {
+        Player player = (m_playersMap.ContainsKey(playerID) ? m_playersMap[playerID] : null);
+
+        if (player != null)
+        {
+            PLAYER_VITALS vitals = player.GetVitals();
+
+            vitals.m_name = newName;
+        }
+    }
+    public void Player1NameChanged(string newName)
+    {
+        ChangePlayerName(PLAYER_ID.PLAYER1, newName);
+    }
+
+    public void Player2NameChanged(string newName)
+    {
+        ChangePlayerName(PLAYER_ID.PLAYER2, newName);
     }
 
     void UpdateUI()
@@ -242,8 +260,7 @@ public class Main : MonoBehaviour
 
     // ******************************************
     // Audio System Helpers
-    
-
+    // ******************************************
     // Dedicated functions. Wrong but fine for this
     static public void AUDIO_Info()
     {
@@ -264,7 +281,6 @@ public class Main : MonoBehaviour
     {
         if (m_audioSystem != null) m_audioSystem.Wrong();
     }
-
 
     static public void AUDIO_Success()
     {
