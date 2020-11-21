@@ -106,6 +106,8 @@ public class Main : MonoBehaviour
         foreach(Player player in m_playersList)
            player.Execute();
 
+        Waiter.UpdateCustomers();
+
         UpdateUI();
     }
 
@@ -213,9 +215,18 @@ public class Main : MonoBehaviour
 
     public void OnPlayerScored(PLAYER_SCORE score)
     {
-        Player player = (m_playersMap.ContainsKey(score.m_playerID) ? m_playersMap[score.m_playerID]:null);
 
-        if (player != null)
-            player.AddScore(score);
+        if (score.m_playerID == PLAYER_ID.ANYONE)
+        {
+            foreach (Player player in m_playersList)
+                player.AddScore(score);
+        }
+        else
+        {
+            Player player = (m_playersMap.ContainsKey(score.m_playerID) ? m_playersMap[score.m_playerID] : null);
+
+            if (player != null)
+                player.AddScore(score);
+        }
     }
 }

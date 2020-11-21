@@ -8,10 +8,13 @@ public class Waiter : MonoBehaviour
 
     static List<Customer>   sm_freeCustomers    = new List<Customer>();
     static List<Customer>   sm_waitingCustomers = new List<Customer>();
-    
+    static List<Customer>   sm_leavingCustomers = new List<Customer>();
 
     // Set this in the inspector
     public Customer[]       m_allCustomers;
+
+    // Used for frustrated customers
+    static PLAYER_SCORE m_scorePacket = new PLAYER_SCORE();
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +28,7 @@ public class Waiter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+    
     }
 
     static public bool HasAvaliableSeating()
@@ -50,10 +53,36 @@ public class Waiter : MonoBehaviour
 
         return retVal;
     }
+    static public void UpdateCustomers()
+    {
+        foreach (Customer customer in sm_waitingCustomers)
+            if (customer.OrderExpired())
+            {
+                Main.SendFloater(customer.transform.position, 3.0f, ("You guys suck! "));
+
+                m_scorePacket.Set(PLAYER_ID.ANYONE,-customer.GetOrderCost(),-customer.GetOrderWaittime());
+
+                customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
+
+                sm_leavingCustomers.Add (customer);
+
+                // Clear this out
+                customer.Clear();
+            }
+
+        RemoveCustomers();
+    }
+    static void RemoveCustomers()
+    {
+        foreach (Customer customer in sm_leavingCustomers)
+            FreeCustomer(customer);
+
+        sm_leavingCustomers.Clear();
+    }
 
     static void FreeCustomer(Customer customer)
     {  
-        if (!sm_waitingCustomers.Contains(customer))
+        if (sm_waitingCustomers.Contains(customer))
             sm_waitingCustomers.Remove(customer);
 
         if (!sm_freeCustomers.Contains(customer))
@@ -77,9 +106,9 @@ public class Waiter : MonoBehaviour
         return true;
     }
     
-    static public uint SubmitPlate(PLAYER_ID playerID,uint ingredientMask)
+    static public int SubmitPlate(PLAYER_ID playerID,uint ingredientMask)
     {
-        uint retVal = 0;
+        int retVal = 0;
 
         foreach (Customer customer in sm_waitingCustomers)
             if (customer.OrderFullFilled(ingredientMask))
@@ -92,10 +121,11 @@ public class Waiter : MonoBehaviour
                 // Clear this out
                 customer.Clear();
 
-                FreeCustomer(customer);
-
-                return retVal;
+                sm_leavingCustomers.Add(customer);
             }
+
+        RemoveCustomers();
+
         return retVal;
     }
 }

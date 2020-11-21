@@ -25,10 +25,10 @@ public enum PLAYER_STATE
 public struct PLAYER_SCORE
 {
     public PLAYER_ID    m_playerID;
-    public uint         m_value;
+    public int          m_value;
     public float        m_timeBonus;
 
-    public void Set(PLAYER_ID newID, uint newValue,float timeBonus=0.0f)
+    public void Set(PLAYER_ID newID, int newValue,float timeBonus=0.0f)
     {
         m_playerID      = newID;
         m_value         = newValue;
@@ -39,7 +39,7 @@ public struct PLAYER_SCORE
 public class PLAYER_VITALS
 {
     public string   m_name  = "NoName";
-    public uint     m_score = 0;
+    public int      m_score = 0;
     public float    m_timer = 300.0f;
 
     public void SetName(string name)

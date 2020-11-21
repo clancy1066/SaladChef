@@ -6,11 +6,16 @@ public class Order : MonoBehaviour
 {
     List<Ingredient> m_ingredients = new List<Ingredient>();
 
-    public uint     m_value;
+    public  int     m_value;
     uint            m_recipeMask;
     float           m_customerWaitTime;
     float           m_customerWaitTimeRemaining;
     bool m_run      = false;
+
+    public float GetCustomerWaittime()
+    {
+        return m_customerWaitTime;
+    }
 
 
     TextMesh m_text;
@@ -29,10 +34,7 @@ public class Order : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!m_run)
-        {
-
-        }
+        
         if (m_text)
         {
             string newText = ("");
@@ -47,12 +49,12 @@ public class Order : MonoBehaviour
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT7)) newText += "7_";
             if ((m_recipeMask & Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) == Ingredient.BitMask(INGREDIENT_TYPE.INGREDIENT8)) newText += "8_"; ;
             */
-            newText += ("\nValue: " + m_value);
+            newText += ("Value: " + m_value);
 
             int minutes = (int)((m_customerWaitTimeRemaining + 0.5f) / 60.0f);
             int seconds = (int)m_customerWaitTimeRemaining % 60;
 
-            newText += ("Time:\t"+ minutes.ToString() + ":" + seconds.ToString());
+            newText += ("\nTime:\t"+ minutes.ToString() + ":" + seconds.ToString());
 
             m_text.text = newText;
         }
@@ -78,8 +80,12 @@ public class Order : MonoBehaviour
 
         m_customerWaitTimeRemaining = m_customerWaitTime;
     }
+    public bool Expired()
+    {
+        return (m_customerWaitTimeRemaining<=0);
+    }
 
-     public bool FullFilled(uint ingredientMask)
+    public bool FullFilled(uint ingredientMask)
     {
         return ((ingredientMask & m_recipeMask) == ingredientMask);
     }
@@ -115,7 +121,7 @@ public class Order : MonoBehaviour
             }
     }
 
-    public void Create(List<Ingredient> ingredients, uint value, float customerWaitTime)
+    public void Create(List<Ingredient> ingredients, int value, float customerWaitTime)
     {
         m_recipeMask = 0;
 

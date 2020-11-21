@@ -55,7 +55,7 @@ public class OrderDispatcher : MonoBehaviour
         }
     }
 
-    Order CreateOrder(float duration,uint value, List<Ingredient> ingredients)
+    Order CreateOrder(float duration,int value, List<Ingredient> ingredients)
     {
         if (m_orderTemplate == null || ingredients==null || ingredients.Count<1)
             return null;
@@ -132,7 +132,7 @@ public class OrderDispatcher : MonoBehaviour
 
                 ConstructRandomIngredientList();
 
-                Order newOrder = CreateOrder(Random.Range(30.0f,120f), (uint)Random.Range(1,10), m_ingredientsTMP);
+                Order newOrder = CreateOrder(Random.Range(3.0f,12.0f), Random.Range(1,10), m_ingredientsTMP);
 
                 if (!Waiter.AddOrder(newOrder))
                 {

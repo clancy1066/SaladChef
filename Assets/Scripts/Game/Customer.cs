@@ -12,6 +12,14 @@ public class Customer : MonoBehaviour
         m_order = null;
     }
 
+    public bool OrderExpired()
+    {
+        // Free these up if no order
+        if (m_order == null)
+            return true;
+
+        return m_order.Expired();
+    }
     public bool OrderFullFilled(uint ingredientMask)
     {
         // Free these up if no order
@@ -34,11 +42,20 @@ public class Customer : MonoBehaviour
         order.gameObject.SetActive(true);
     }
 
-    public uint GetOrderCost()
+    public int GetOrderCost()
     {
         if (m_order != null)
             return m_order.m_value;
         
         return 0;
     }
+
+    public  float GetOrderWaittime()
+    {
+        if (m_order != null)
+            return m_order.GetCustomerWaittime();
+
+        return 0;
+    }
+
 }

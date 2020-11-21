@@ -33,7 +33,7 @@ public class PlayerScoreUI : MonoBehaviour
         SetTime(vitals.m_timer);
     }
 
-    public void SetScore(uint score)
+    public void SetScore(int score)
     {
         if (m_scoreText != null)
         {

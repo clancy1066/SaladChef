@@ -96,7 +96,7 @@ public class ChoppingTable : MonoBehaviour
 
             if (Done())
             {
-                uint pointsToAdd = Waiter.SubmitPlate(m_playerID, m_currentIngredientsMask);
+                int pointsToAdd = Waiter.SubmitPlate(m_playerID, m_currentIngredientsMask);
                 
                 if (pointsToAdd>=0)
                 {
