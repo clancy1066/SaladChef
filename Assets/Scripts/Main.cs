@@ -19,6 +19,7 @@ public class Main : MonoBehaviour
 
     public Transform m_startScreen;
     public Transform m_gameScreen;
+    public Transform m_hiScoreScreen;
 
     // Score Keeper
     ScoreKeeper      m_scoreKeeper;
@@ -64,6 +65,8 @@ public class Main : MonoBehaviour
         
         ActivateLevel(m_startScreen, false);
         ActivateLevel(m_gameScreen, false);
+        ActivateLevel(m_hiScoreScreen, false);
+        
     }
 
     // Update is called once per frame
@@ -83,6 +86,7 @@ public class Main : MonoBehaviour
         
         ActivateLevel(m_startScreen, false);
         ActivateLevel(m_gameScreen, false);
+        ActivateLevel(m_hiScoreScreen, false);
         ChangeState(GAME_STATE.START);
     }
     void UpdateStart()
@@ -94,6 +98,8 @@ public class Main : MonoBehaviour
             m_levelComplete = false;
             ActivateLevel(m_startScreen, true);
             ActivateLevel(m_gameScreen, false);
+            ActivateLevel(m_hiScoreScreen, false);
+
         }
 
         if (m_levelComplete)
@@ -109,6 +115,7 @@ public class Main : MonoBehaviour
             if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(true);
 
             ActivateLevel(m_startScreen, false);
+            ActivateLevel(m_hiScoreScreen, false);
             ActivateLevel(m_gameScreen, true);
 
             SetupPlayers();

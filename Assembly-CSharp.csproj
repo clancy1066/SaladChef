@@ -72,6 +72,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\Scripts\Game\Player.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
+    <Compile Include="Assets\Scripts\System\Audio\AudioSystem.cs" />
     <Compile Include="Assets\Scripts\System\Input System\UnityInput.cs" />
     <Compile Include="Assets\Scripts\Game\OrderDispatcher.cs" />
     <Compile Include="Assets\Scripts\Game\Order.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Assets\Scripts\UI\PlayerScoreUI.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Game\TrashCan.cs" />
-    <Compile Include="Assets\Scripts\System\Audio\AudioSystem.cs" />
+    <Compile Include="Assets\Scripts\UI\HiScores.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -139,6 +140,7 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\Materials\Fader.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+     <None Include="Assets\schighscores.txt" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\Scripts\Dummy.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
