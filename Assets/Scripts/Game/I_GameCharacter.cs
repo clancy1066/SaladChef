@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface I_GameCharacter
 {
-    void Execute();
+    bool Execute();
 }

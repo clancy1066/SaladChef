@@ -7,6 +7,7 @@ public enum GAME_STATE
     INIT
 ,   START
 ,   GAME
+,   SCORES
 };
 
 public class Main : MonoBehaviour
@@ -14,8 +15,8 @@ public class Main : MonoBehaviour
     // Not a great practice
     static Main _inst;
 
-    Dictionary<PLAYER_ID,Player>    m_playersMap = new Dictionary<PLAYER_ID, Player>();
-    List<Player>                    m_playersList      = new List<Player>();
+    Dictionary<PLAYER_ID,Player>    m_playersMap    = new Dictionary<PLAYER_ID, Player>();
+    List<Player>                    m_playersList   = new List<Player>();
 
     public Transform m_startScreen;
     public Transform m_gameScreen;
@@ -48,6 +49,29 @@ public class Main : MonoBehaviour
     {
         _inst = this;
 
+        ChangeState(GAME_STATE.INIT);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        switch (m_gameState)
+        {
+            case GAME_STATE.INIT:   UpdateInit();   break;
+            case GAME_STATE.START:  UpdateStart();  break;
+            case GAME_STATE.GAME:   UpdateGame();   break;
+            case GAME_STATE.SCORES: UpdateScores(); break;
+        }
+    }
+
+    void UpdateInit()
+    {
+        if (HandleStateChanged())
+        {
+            // One frame for everyhting to settle
+            return;
+        }
+
         Player[] allCharacters = GetComponentsInChildren<Player>();
 
         foreach (Player player in allCharacters)
@@ -60,33 +84,16 @@ public class Main : MonoBehaviour
         m_scoreKeeper       = GetComponentInChildren<ScoreKeeper>();
         m_audioSystem       = GetComponentInChildren<AudioSystem>();
 
-        if (m_floaterTemplate != null)  
+        if (m_floaterTemplate != null)
             m_floaterTemplate.gameObject.SetActive(false);
-        
-        ActivateLevel(m_startScreen, false);
-        ActivateLevel(m_gameScreen, false);
-        ActivateLevel(m_hiScoreScreen, false);
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        switch (m_gameState)
-        {
-            case GAME_STATE.INIT:   UpdateInit();   break;
-            case GAME_STATE.START:  UpdateStart();  break;
-            case GAME_STATE.GAME:   UpdateGame();   break;
-        }
-    }
+        ActivateLevel(m_startScreen,    false);
+        ActivateLevel(m_gameScreen,     false);
+        ActivateLevel(m_hiScoreScreen,  false);
 
-    void UpdateInit()
-    {
         if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(false);
         
-        ActivateLevel(m_startScreen, false);
-        ActivateLevel(m_gameScreen, false);
-        ActivateLevel(m_hiScoreScreen, false);
+
         ChangeState(GAME_STATE.START);
     }
     void UpdateStart()
@@ -121,16 +128,41 @@ public class Main : MonoBehaviour
             SetupPlayers();
 
             AUDIO_Track2(true);
-
         }
+
+        UpdateUI();
+
+        // Check for jump to high score screen
+        bool playersActive = false;
 
         // Just execute them
         foreach (Player player in m_playersList)
-           player.Execute();
+            playersActive|=player.Execute();
 
         Waiter.UpdateCustomers();
 
-        UpdateUI();
+        if (!playersActive)
+            ChangeState(GAME_STATE.SCORES);
+
+    }
+
+    void UpdateScores()
+    {
+
+        if (HandleStateChanged())
+        {
+            if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(true);
+
+            ActivateLevel(m_startScreen, false);
+            ActivateLevel(m_hiScoreScreen, true);
+            ActivateLevel(m_gameScreen, false);
+
+            SetupPlayers();
+
+            AUDIO_Track2(true);
+
+        }
+
     }
 
     void ActivateLevel(Transform screen, bool onOrOff)
@@ -167,7 +199,10 @@ public class Main : MonoBehaviour
 
     void UpdateUI()
     {
-        for(PLAYER_ID iter=PLAYER_ID.PLAYER1;iter<PLAYER_ID.MAX;iter++)
+        if (m_scoreKeeper == null)
+            return;
+
+        for (PLAYER_ID iter=PLAYER_ID.PLAYER1;iter<PLAYER_ID.MAX;iter++)
         {
             Player player = (m_playersMap.ContainsKey(iter) ? m_playersMap[iter] : null);
 

@@ -40,7 +40,7 @@ public class PLAYER_VITALS
 {
     public string   m_name  = "No Name";
     public int      m_score = 0;
-    public float    m_timer = 300.0f;
+    public float    m_timer = 10.0f;
 
     public void SetName(string name)
     {
@@ -151,7 +151,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
     }
 
-    public void Execute() 
+    public bool Execute() 
     {     
         if (m_gameInput != null)
         {
@@ -173,6 +173,8 @@ public class Player : MonoBehaviour,I_GameCharacter
         else
             m_playerVitals.m_timer = 0.0f;
 
+        return m_playerVitals.m_timer >= 0;
+;
     }
 
     void ClearIngredients()
