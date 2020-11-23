@@ -23,7 +23,6 @@ public class HI_SCORE
 
         if (record!=null)
         {
-
             string[] parts = record.Split(' ');
 
        
@@ -61,7 +60,7 @@ public class HiScores : MonoBehaviour
         HI_SCORE aScore = new HI_SCORE();
 
         aScore.m_name   = vitals.m_name;
-        aScore.m_score = vitals.m_score;
+        aScore.m_score  = vitals.m_score;
 
         m_currentHiScores[aScore.m_score] = aScore;
     }
@@ -114,7 +113,7 @@ public class HiScores : MonoBehaviour
 
         foreach (KeyValuePair<int, HI_SCORE> iter in m_currentHiScores)
         {
-            m_text[textIndex++].text = (iter.Value.m_name + " " + iter.Key);
+            m_text[textIndex++].text = (iter.Value.m_name + " " + iter.Key.ToString());
 
             if (textIndex >= maxCount)
                 break;

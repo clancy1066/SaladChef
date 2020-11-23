@@ -46,7 +46,7 @@ public class PLAYER_VITALS
 {
     public string   m_name  = "No Name";
     public int      m_score = 0;
-    public float    m_timer = 3.0f;
+    public float    m_timer = 300.0f;
 
     public PLAYER_VITALS()
     {
@@ -69,7 +69,7 @@ public void SetName(string name)
     {
         m_name = "No Name";
         m_score = 0;
-        m_timer = 3.0f;
+        m_timer = 300.0f;
     }
 };
 
