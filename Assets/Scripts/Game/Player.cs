@@ -195,9 +195,11 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             Main.SendFloater(m_focusIngredient.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
 
+            Vector3 offset = 0.2f * Ingredient.GetPlacementOffset(m_ingredients.Count);
+
             newIngredient.transform.localScale      *= 0.75f;
             newIngredient.transform.localPosition   = Vector3.zero;
-            newIngredient.transform.position        = m_model.GetHolder().transform.position;
+            newIngredient.transform.position        = m_model.GetHolder().transform.position+offset;
             newIngredient.transform.parent          = m_model.GetHolder().transform;
 
             if (!m_ingredients.Contains(newIngredient))

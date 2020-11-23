@@ -41,13 +41,15 @@ public class ChoppingTable : MonoBehaviour
         {
             Ingredient newIngredient = Ingredient.Grab(ingredient.m_ingredientType);
 
+            Vector3 offset = 0.25f*Ingredient.GetPlacementOffset(m_currentIngredients.Count);
+
             if (!m_currentIngredients.Contains(newIngredient))
                 m_currentIngredients.Add(newIngredient);
 
             Transform parentTransform = (m_ingredientPos != null ? m_ingredientPos : transform);
 
             newIngredient.transform.localPosition  = Vector3.zero;
-            newIngredient.transform.position       = parentTransform.position;
+            newIngredient.transform.position       = parentTransform.position+offset;
     
             newIngredient.transform.SetParent(parentTransform);
 

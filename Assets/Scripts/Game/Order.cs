@@ -14,9 +14,6 @@ public class Order : MonoBehaviour
 
     TextMesh m_text;
 
-    // Offsets for placing ingredients
-    static Vector3[] m_ingredientOffsets = { Vector3.right, -Vector3.right, Vector3.up };
-
     // Start is called before the first frame update
     void Start()
     {
@@ -128,7 +125,7 @@ public class Order : MonoBehaviour
                if (!Ingredient.SanityCheck(newIngredient))
                     Debug.Log("For the love of...");
 
-                Vector3 offset = m_ingredientOffsets[offsetCount % m_ingredientOffsets.Length];
+                Vector3 offset = Ingredient.GetPlacementOffset(offsetCount);
 
                 offsetCount++;
 

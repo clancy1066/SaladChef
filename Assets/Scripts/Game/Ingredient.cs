@@ -33,6 +33,9 @@ public class Ingredient : MonoBehaviour
 
     public bool m_grabbedByPlayer   = false;
 
+    // Offsets from root
+    public static Vector3[] sm_ingredientOffsets = { Vector3.zero, -Vector3.right, Vector3.right };
+
     private void Start()
     {
         InstanceInit();
@@ -60,6 +63,11 @@ public class Ingredient : MonoBehaviour
         ChangeColor();
 
         m_grabbedByPlayer = false;
+    }
+
+    static public Vector3 GetPlacementOffset(int baseIndex)
+    {
+        return sm_ingredientOffsets[baseIndex % sm_ingredientOffsets.Length];
     }
 
     void ChangeColor()
