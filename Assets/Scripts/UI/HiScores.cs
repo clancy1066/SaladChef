@@ -38,7 +38,7 @@ public class HiScores : MonoBehaviour
     const int cm_MAXHighScores = 10;
     const string m_path = "Assets/schighscores.txt";
 
-    Dictionary<int, string> m_currentHiScores = new Dictionary<int, string>();
+    Dictionary<int, HI_SCORE> m_currentHiScores = new Dictionary<int, HI_SCORE>();
 
     public Transform m_container;
     Text[]            m_text;
@@ -63,19 +63,20 @@ public class HiScores : MonoBehaviour
         aScore.m_name   = vitals.m_name;
         aScore.m_score = vitals.m_score;
 
-        m_currentHiScores[aScore.m_score] = aScore.m_name;
+        m_currentHiScores[aScore.m_score] = aScore;
     }
 
     public void WriteFile()
-    {
-        HI_SCORE hiScore = new HI_SCORE();
+    { 
+       //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(m_path, false);
 
-        //Write some text to the test.txt file
-        StreamWriter writer = new StreamWriter(m_path,false);
-        hiScore.Save(writer);
+        foreach (KeyValuePair<int, HI_SCORE> hiScore in m_currentHiScores)
+            hiScore.Value.Save(writer);
         
         writer.Close();
     }
+
     void ReadFile()
     {
         m_currentHiScores.Clear();
@@ -83,13 +84,16 @@ public class HiScores : MonoBehaviour
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(m_path);
 
+        if (reader == null)
+            return;
+
         while(!reader.EndOfStream)
         {
             HI_SCORE hiScore = new HI_SCORE();
 
             hiScore.Load(reader);
 
-            m_currentHiScores[hiScore.m_score] = hiScore.m_name;
+            m_currentHiScores[hiScore.m_score] = hiScore;
         }
        
         reader.Close();
@@ -108,9 +112,9 @@ public class HiScores : MonoBehaviour
         if (maxCount > m_text.Length)
             maxCount = m_text.Length;
 
-        foreach (KeyValuePair<int, string> iter in m_currentHiScores)
+        foreach (KeyValuePair<int, HI_SCORE> iter in m_currentHiScores)
         {
-            m_text[textIndex++].text = (iter.Value + " " + iter.Key);
+            m_text[textIndex++].text = (iter.Value.m_name + " " + iter.Key);
 
             if (textIndex >= maxCount)
                 break;

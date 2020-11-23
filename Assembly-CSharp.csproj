@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\System\Audio\AudioSystem.cs" />
     <Compile Include="Assets\Scripts\System\Input System\UnityInput.cs" />
     <Compile Include="Assets\Scripts\Game\OrderDispatcher.cs" />
+    <Compile Include="Assets\Scripts\UI\HiScores.cs" />
     <Compile Include="Assets\Scripts\Game\Order.cs" />
     <Compile Include="Assets\Scripts\UI\StartScreen.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
@@ -117,7 +118,6 @@
     <Compile Include="Assets\Scripts\UI\PlayerScoreUI.cs" />
     <Compile Include="Assets\Scripts\Game\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Game\TrashCan.cs" />
-    <Compile Include="Assets\Scripts\UI\HiScores.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

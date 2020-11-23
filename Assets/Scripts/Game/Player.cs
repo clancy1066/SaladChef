@@ -62,8 +62,8 @@ public void SetName(string name)
     public void Reset()
     {
         m_name = "No Name";
-        m_score = 0;
-        m_timer = 300.0f;
+        m_score = -12;
+        m_timer = 3.0f;
     }
 };
 
@@ -125,6 +125,7 @@ public class Player : MonoBehaviour,I_GameCharacter
     public void Reset()
     {
         m_playerVitals.Reset();
+
     }
 
     public void Choose()

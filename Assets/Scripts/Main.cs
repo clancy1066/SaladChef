@@ -89,8 +89,10 @@ public class Main : MonoBehaviour
         }
 
         foreach (Player player in m_playersList)
+        {
+            player.gameObject.SetActive(true);
             player.Reset();
-        
+        }
 
         m_floaterTemplate   = GetComponentInChildren<Floater>();
         m_scoreKeeper       = GetComponentInChildren<ScoreKeeper>();
@@ -104,7 +106,6 @@ public class Main : MonoBehaviour
         ActivateLevel(m_hiScoreScreen,  false);
 
         if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(false);
-        
 
         ChangeState(GAME_STATE.START);
     }
@@ -149,7 +150,15 @@ public class Main : MonoBehaviour
 
         // Just execute them
         foreach (Player player in m_playersList)
-            playersActive|=player.Execute();
+        {
+            bool active = player.Execute();
+
+            if (!active)
+                player.gameObject.SetActive(false);
+
+
+             playersActive |= active;
+        }
 
         if (!playersActive)
             ChangeState(GAME_STATE.SCORES);
@@ -168,8 +177,21 @@ public class Main : MonoBehaviour
 
             if (m_hiScores != null)
             {
-                foreach (Player player in m_playersList)
-                    m_hiScores.InsertElement(player.GetVitals());
+                if (m_isTwoPlayerGame)
+                {
+                    foreach (Player player in m_playersList)
+                        m_hiScores.InsertElement(player.GetVitals());
+
+                }
+                else
+                {
+                    Player player1 = (m_playersMap.ContainsKey(PLAYER_ID.PLAYER1) ? m_playersMap[PLAYER_ID.PLAYER1] : null);
+
+                    if (player1 != null)
+                        m_hiScores.InsertElement(player1.GetVitals());
+                }
+
+                
 
                 m_hiScores.PopulatePanel();
 
@@ -190,8 +212,14 @@ public class Main : MonoBehaviour
             screen.gameObject.SetActive(onOrOff);
     }
 
+    // *************** End game state machine ******************/
+
     void SetupPlayers()
     {
+        if (m_playersMap.ContainsKey(PLAYER_ID.PLAYER2))
+        {
+            m_playersMap[PLAYER_ID.PLAYER2].gameObject.SetActive(m_isTwoPlayerGame);
+        }
 
     }
 
