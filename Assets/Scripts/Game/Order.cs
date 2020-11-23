@@ -10,7 +10,7 @@ public class Order : MonoBehaviour
     uint            m_recipeMask;
     float           m_customerWaitTime;
     float           m_customerWaitTimeRemaining;
-    bool m_run      = false;
+    bool            m_fulfilled;
 
     TextMesh m_text;
 
@@ -20,9 +20,9 @@ public class Order : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_text = GetComponentInChildren<TextMesh>();
+        m_text      = GetComponentInChildren<TextMesh>();
 
-        m_run = false;
+        m_fulfilled = false;
     }
 
     // Update is called once per frame
@@ -60,7 +60,7 @@ public class Order : MonoBehaviour
 
     public void Go()
     {
-        m_run = true;
+        m_fulfilled = false;
 
         m_customerWaitTimeRemaining = m_customerWaitTime;
 
@@ -75,6 +75,7 @@ public class Order : MonoBehaviour
             Ingredient.Release(ingredient);
 
         m_customerWaitTimeRemaining = m_customerWaitTime;
+        m_ingredients.Clear();
     }
     public float GetCustomerWaitTime()
     {
@@ -90,10 +91,17 @@ public class Order : MonoBehaviour
     {
         return (m_customerWaitTimeRemaining<=0);
     }
-
-    public bool FullFilled(uint ingredientMask)
+    public bool IsFullFilled()
     {
-        return ((ingredientMask & m_recipeMask) == ingredientMask);
+        return m_fulfilled;
+    }
+
+
+    public bool CheckFullFilled(uint ingredientMask)
+    {
+        m_fulfilled = ((ingredientMask & m_recipeMask) == ingredientMask);
+
+        return m_fulfilled;
     }
 
     public void SetIngredients(List<Ingredient> ingredients)
@@ -106,12 +114,19 @@ public class Order : MonoBehaviour
         if (ingredients != null)
             foreach (Ingredient ingredient in ingredients)
             {
+                if (ingredient.m_grabbedByPlayer)
+                    Debug.Log("You gotta be...");
+
                 Ingredient newIngredient = Ingredient.Grab(ingredient.m_ingredientType);
 
                 if (newIngredient == null)
                     continue;
 
-                m_ingredients.Add(newIngredient);
+                if (!m_ingredients.Contains(newIngredient))
+                    m_ingredients.Add(newIngredient);
+
+               if (!Ingredient.SanityCheck(newIngredient))
+                    Debug.Log("For the love of...");
 
                 Vector3 offset = m_ingredientOffsets[offsetCount % m_ingredientOffsets.Length];
 
@@ -130,6 +145,7 @@ public class Order : MonoBehaviour
     public void Create(List<Ingredient> ingredients, int value, float customerWaitTime)
     {
         m_recipeMask = 0;
+        m_fulfilled = false;
 
         SetIngredients(ingredients);
 

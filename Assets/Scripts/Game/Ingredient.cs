@@ -31,6 +31,8 @@ public class Ingredient : MonoBehaviour
     // Need this to shut off collision
     Rigidbody            m_rb;
 
+    public bool m_grabbedByPlayer   = false;
+
     private void Start()
     {
         InstanceInit();
@@ -44,7 +46,6 @@ public class Ingredient : MonoBehaviour
             m_spawnLists[m_ingredientType].Add(this);
         }
 
-
         // Grab the renderer
         m_renderer = GetComponentInChildren<Renderer>();
 
@@ -57,6 +58,8 @@ public class Ingredient : MonoBehaviour
         m_rb = GetComponentInChildren<Rigidbody>();
 
         ChangeColor();
+
+        m_grabbedByPlayer = false;
     }
 
     void ChangeColor()
@@ -95,7 +98,7 @@ public class Ingredient : MonoBehaviour
 
         if (m_spawnLists[ingredientType].Count > 1)
         {
-            int index = (m_spawnLists[ingredientType].Count - 1);
+            int index = 1;
       
             retVal = m_spawnLists[ingredientType][index];
 
@@ -103,6 +106,9 @@ public class Ingredient : MonoBehaviour
         }
         else
             retVal = Instantiate(m_spawnLists[ingredientType][0]);
+
+        if (retVal.m_grabbedByPlayer)
+            Debug.Log("What the?");
 
         if (retVal != null)
         {
@@ -113,6 +119,10 @@ public class Ingredient : MonoBehaviour
             retVal.transform.SetParent(null);
             retVal.transform.localScale = m_spawnLists[ingredientType][0].transform.localScale;
         }
+
+        if (!SanityCheck(retVal))
+            Debug.Log("On my ever living...");
+
         return retVal;
     }
 
@@ -121,15 +131,28 @@ public class Ingredient : MonoBehaviour
         if (ingredient == null)
             return;
 
+        if (ingredient.m_grabbedByPlayer)
+            Debug.Log("Huh?");
+
         if (!m_spawnLists.ContainsKey(ingredient.m_ingredientType))
             return;
 
         if (!m_spawnLists[ingredient.m_ingredientType].Contains(ingredient))
             m_spawnLists[ingredient.m_ingredientType].Add(ingredient);
+        else
+            Debug.Log("Releasing an ingredient already in a list");
 
         // Leave it laying around if wqe don't reach here
         ingredient.transform.SetParent(null);
         ingredient.gameObject.SetActive(false);
 
+    }
+
+    static public  bool SanityCheck(Ingredient ingredient)
+    {
+        if (ingredient == null)
+            return true;
+
+        return (!m_spawnLists[ingredient.m_ingredientType].Contains(ingredient));
     }
 }

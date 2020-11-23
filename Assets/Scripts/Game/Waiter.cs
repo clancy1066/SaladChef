@@ -5,137 +5,85 @@ using UnityEngine;
 public class Waiter : MonoBehaviour
 {
   //  static Waiter           _inst;
-
-    static List<Customer>   sm_freeCustomers    = new List<Customer>();
     static List<Customer>   sm_waitingCustomers = new List<Customer>();
-    static List<Customer>   sm_leavingCustomers = new List<Customer>();
-
-    // Set this in the inspector
-    public Customer[]       m_allCustomers;
-
+   
     // Used for frustrated customers
     static PLAYER_SCORE m_scorePacket = new PLAYER_SCORE();
 
-    // Start is called before the first frame update
-    void Start()
+
+    static void CustomerSuccess(Customer customer)
     {
-        // Grab all the customer spots
-        if (m_allCustomers != null)
-            foreach (Customer customer in m_allCustomers)
-                sm_freeCustomers.Add(customer);
+        Main.AUDIO_Success();
+
+        Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! " + customer.GetOrderCost() + " POINTS"));
+
+        m_scorePacket.Set(customer.GetSubmittingPlayer(), customer.GetOrderCost(), customer.GetRemainingWaitTime());
+
+        FreeCustomer(customer);
     }
 
-    // Update is called once per frame
-    void Update()
+    static void CustomerFail(Customer customer)
     {
-    
+        Main.AUDIO_Fail();
+
+        Main.SendFloater(customer.transform.position, 2.0f, ("You guys suck!"));
+
+        m_scorePacket.Set(customer.GetSubmittingPlayer(), -customer.GetOrderCost(), -customer.GetOrderWaittime());
+
+        FreeCustomer(customer);
     }
 
-    static public bool HasAvaliableSeating()
+    static public void OrderFailed(Customer customer)
     {
-        return (sm_freeCustomers.Count > 0);
+        CustomerFail(customer);
+
+        customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
+
+        FreeCustomer(customer);
     }
 
-    static Customer GetCustomer()
+    static public void OrderSatisfied(Customer customer)
     {
-        Customer retVal = null; ;
+        CustomerSuccess(customer);
 
-        if (sm_freeCustomers.Count>0)
-        {
-            int index = Random.Range(0, 100) % sm_freeCustomers.Count;
+        customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
 
-            retVal = sm_freeCustomers[index];
-            sm_freeCustomers.RemoveAt(index);
-
-            if (!sm_waitingCustomers.Contains(retVal))
-                sm_waitingCustomers.Add(retVal);
-        }
-
-        return retVal;
+        FreeCustomer(customer);
     }
-    static public void UpdateCustomers()
+
+    static public void FreeCustomer(Customer oldCustomer)
     {
-        foreach (Customer customer in sm_waitingCustomers)
-            if (customer.OrderExpired())
-            {
-                Main.SendFloater(customer.transform.position, 3.0f, ("You guys suck! "));
-                Main.AUDIO_Fail();
-
-                m_scorePacket.Set(PLAYER_ID.ANYONE,-customer.GetOrderCost(),-customer.GetOrderWaittime());
-
-                customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
-
-                sm_leavingCustomers.Add (customer);
-
-                // Clear this out
-                customer.Clear();
-            }
-
-        RemoveCustomers();
+        if (sm_waitingCustomers.Contains(oldCustomer))
+            sm_waitingCustomers.Remove(oldCustomer);
     }
-    static void RemoveCustomers()
-    {
-        foreach (Customer customer in sm_leavingCustomers)
-            FreeCustomer(customer);
-
-        sm_leavingCustomers.Clear();
-    }
-
-    static void FreeCustomer(Customer customer)
-    {  
-        if (sm_waitingCustomers.Contains(customer))
-            sm_waitingCustomers.Remove(customer);
-
-        if (!sm_freeCustomers.Contains(customer))
-            sm_freeCustomers.Add(customer);
-
-    }
-
-    static public bool  AddOrder (Order newOrder)
+ 
+    static public bool  AddCustomer (Customer newCustomer)
     {
         // Bad if somebody jumped the gun
-        if (newOrder == null)
-            return false;
-
-        Customer newCustomer = GetCustomer();
-
         if (newCustomer == null)
             return false;
 
-        newCustomer.SetOrder(newOrder);
+        if (!sm_waitingCustomers.Contains(newCustomer))
+            sm_waitingCustomers.Add(newCustomer);
 
         return true;
     }
     
     static public int SubmitPlate(PLAYER_ID playerID,uint ingredientMask)
     {
-        int retVal = 0;
-
         foreach (Customer customer in sm_waitingCustomers)
             if (customer.OrderFullFilled(ingredientMask))
             {
-                // Add score
-                Main.SendFloater(customer.transform.position, 2.0f, ("ORDER COMPLETE! "+ customer.GetOrderCost() + " POINTS"));
+                customer.SetSubmittingPlayer(playerID);
+               
 
-                Main.AUDIO_Success();
+                OrderSatisfied(customer);
 
-                retVal =  customer.GetOrderCost();
-
-
-                m_scorePacket.Set(playerID, retVal,customer.GetRemainingWaitTime());
-
-                customer.SendMessageUpwards("OnPlayerScored", m_scorePacket);
-
-                // Clear this out
-                customer.Clear();
-
-                sm_leavingCustomers.Add(customer);
-
-                break;
+                return customer.GetOrderCost();
             }
+       
+ 
 
-        RemoveCustomers();
-
-        return retVal;
+        return -1;
     }
 }

@@ -100,17 +100,7 @@ public class ChoppingTable : MonoBehaviour
             {
                 int pointsToAdd = Waiter.SubmitPlate(m_playerID, m_currentIngredientsMask);
                 
-                if (pointsToAdd>=0)
-                {
-                  
-                    string floaterText = "Order Complete ";
-
-                    foreach (Ingredient ingredient in m_currentIngredients)
-                        floaterText += (ingredient.m_ingredientType + "\n");
-                
-                    Main.SendFloater(m_ingredientPos.transform.position, 2.0f, floaterText );
-                }       
-                else
+                if (pointsToAdd<=0)
                     Main.SendFloater(m_ingredientPos.transform.position, 2.0f, ("Failed and fed to the dogs"));
 
                 ClearIngredients();

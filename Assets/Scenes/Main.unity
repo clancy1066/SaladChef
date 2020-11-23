@@ -2869,6 +2869,7 @@ MonoBehaviour:
   m_ingredientType: 4
   m_ingredientMask: 0
   m_choppingTime: 3
+  m_grabbedByPlayer: 0
 --- !u!1 &487182475
 GameObject:
   m_ObjectHideFlags: 0
@@ -3083,6 +3084,7 @@ MonoBehaviour:
   m_ingredientType: 1
   m_ingredientMask: 0
   m_choppingTime: 2
+  m_grabbedByPlayer: 0
 --- !u!1 &528487241
 GameObject:
   m_ObjectHideFlags: 0
@@ -4712,6 +4714,7 @@ MonoBehaviour:
   m_ingredientType: 1
   m_ingredientMask: 0
   m_choppingTime: 2
+  m_grabbedByPlayer: 0
 --- !u!54 &719833635
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4825,6 +4828,7 @@ MonoBehaviour:
   m_ingredientType: 0
   m_ingredientMask: 0
   m_choppingTime: 2
+  m_grabbedByPlayer: 0
 --- !u!135 &752877248
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7064,6 +7068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61bbd03698103f24f88c67ebf1698d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_allCustomers: []
 --- !u!1 &1141297486
 GameObject:
   m_ObjectHideFlags: 0
@@ -7266,6 +7271,7 @@ MonoBehaviour:
   m_ingredientType: 2
   m_ingredientMask: 0
   m_choppingTime: 5
+  m_grabbedByPlayer: 0
 --- !u!1 &1167309948
 GameObject:
   m_ObjectHideFlags: 0
@@ -7316,6 +7322,7 @@ MonoBehaviour:
   m_ingredientType: 3
   m_ingredientMask: 0
   m_choppingTime: 3
+  m_grabbedByPlayer: 0
 --- !u!54 &1167309951
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8651,6 +8658,7 @@ MonoBehaviour:
   m_ingredientType: 3
   m_ingredientMask: 0
   m_choppingTime: 3
+  m_grabbedByPlayer: 0
 --- !u!1 &1403885165
 GameObject:
   m_ObjectHideFlags: 0
@@ -9063,12 +9071,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207a80015f4fc9c45b686fbe9ba23952, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_allCustomers:
-  - {fileID: 187075329}
-  - {fileID: 1724776456}
-  - {fileID: 786118783}
-  - {fileID: 828678561}
-  - {fileID: 825368049}
 --- !u!1 &1552952072
 GameObject:
   m_ObjectHideFlags: 0
@@ -9962,7 +9964,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703660828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.033}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 848822735}
@@ -9970,7 +9972,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 556.25885, y: 326.0977}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!102 &1703660830
@@ -10450,6 +10452,7 @@ MonoBehaviour:
   m_ingredientType: 0
   m_ingredientMask: 0
   m_choppingTime: 2
+  m_grabbedByPlayer: 0
 --- !u!114 &1746855486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11448,6 +11451,7 @@ MonoBehaviour:
   m_ingredientType: 4
   m_ingredientMask: 0
   m_choppingTime: 3
+  m_grabbedByPlayer: 0
 --- !u!54 &1939535691
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12429,6 +12433,7 @@ MonoBehaviour:
   m_ingredientType: 2
   m_ingredientMask: 0
   m_choppingTime: 5
+  m_grabbedByPlayer: 0
 --- !u!54 &2105557626
 Rigidbody:
   m_ObjectHideFlags: 0

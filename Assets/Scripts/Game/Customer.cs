@@ -5,11 +5,30 @@ using UnityEngine;
 public class Customer : MonoBehaviour
 {
     Order m_order;
+    PLAYER_ID m_submittingPlayer    = PLAYER_ID.ANYONE;
 
     public void Clear()
     {
         OrderDispatcher.FreeOrder(m_order);
         m_order = null;
+    }
+
+    public void SetSubmittingPlayer(PLAYER_ID newID)
+    {
+        m_submittingPlayer = newID;
+    }
+
+    public PLAYER_ID GetSubmittingPlayer()
+    {
+        return m_submittingPlayer;
+    }
+
+    public bool IsSatisfied()
+    {
+        if (m_order != null)
+            return m_order.IsFullFilled();
+
+        return true;
     }
 
     public bool OrderExpired()
@@ -26,7 +45,7 @@ public class Customer : MonoBehaviour
         if (m_order == null)
             return true;
 
-        return m_order.FullFilled(ingredientMask);
+        return m_order.CheckFullFilled(ingredientMask);
     }
     public void SetOrder(Order order)
     {
@@ -40,6 +59,11 @@ public class Customer : MonoBehaviour
         order.transform.localPosition = Vector3.zero;
 
         order.gameObject.SetActive(true);
+    }
+
+    public Order GetOrder()
+    {
+        return m_order; 
     }
 
     public int GetOrderCost()

@@ -40,7 +40,7 @@ public class PLAYER_VITALS
 {
     public string   m_name  = "No Name";
     public int      m_score = 0;
-    public float    m_timer = 10.0f;
+    public float    m_timer = 300.0f;
 
     public void SetName(string name)
     {
@@ -202,6 +202,8 @@ public class Player : MonoBehaviour,I_GameCharacter
 
             if (!m_ingredients.Contains(newIngredient))
                 m_ingredients.Add(newIngredient);
+
+            newIngredient.m_grabbedByPlayer = true;
 
          //   Main.SendFloater(m_model.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
         }

@@ -139,8 +139,6 @@ public class Main : MonoBehaviour
         foreach (Player player in m_playersList)
             playersActive|=player.Execute();
 
-        Waiter.UpdateCustomers();
-
         if (!playersActive)
             ChangeState(GAME_STATE.SCORES);
 

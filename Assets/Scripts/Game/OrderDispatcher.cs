@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class OrderDispatcher : MonoBehaviour
 {
-    static List<Order> sm_freeOrders = new List<Order>();
-
-    static List<Ingredient> sm_ingredients = new List<Ingredient>();
+    static List<Customer> sm_freeCustomers      = new List<Customer>();
+    static List<Customer> sm_leavingCustomers   = new List<Customer>();
+    static List<Customer> sm_waitingCustomers   = new List<Customer>();
+    static List<Order> sm_freeOrders            = new List<Order>();
+    static List<Ingredient> sm_ingredients      = new List<Ingredient>();
 
     List<Ingredient> m_ingredientsTMP = new List<Ingredient>();
+
+    // Set this in the inspector
+    public Customer[] m_allCustomers;
 
     static Order sm_orderTemplate;
     Order   m_orderTemplate
@@ -27,6 +32,13 @@ public class OrderDispatcher : MonoBehaviour
 
         if (m_orderTemplate != null)
             m_orderTemplate.gameObject.SetActive(false);
+
+        // Grab all the customer spots
+        m_allCustomers = GetComponentsInChildren<Customer>();
+
+        if (m_allCustomers != null)
+            foreach (Customer customer in m_allCustomers)
+                sm_freeCustomers.Add(customer);
     }
 
 
@@ -51,9 +63,16 @@ public class OrderDispatcher : MonoBehaviour
                 sm_ingredients.Add(newIngredient);
 
                 newIngredient.gameObject.SetActive(false);
+
+                if (newIngredient.m_grabbedByPlayer)
+                    Debug.Log("Huhu?");
             }
         }
     }
+
+    // *********************************************
+    // Orders
+    // *********************************************
 
     Order CreateOrder(float duration,int value, List<Ingredient> ingredients)
     {
@@ -98,6 +117,83 @@ public class OrderDispatcher : MonoBehaviour
         order.gameObject.SetActive(false);
     }
 
+    // *******************************************
+    // Customer methods
+    // *******************************************
+    static public void UpdateCustomers()
+    {
+        foreach (Customer customer in sm_waitingCustomers)
+        {
+            bool doFree = customer.OrderExpired()||customer.IsSatisfied();
+            
+            if (customer.OrderExpired())
+                Waiter.OrderFailed(customer);
+                
+             if (doFree)
+                FreeCustomerDeferred(customer);
+         }
+          
+
+        RemoveCustomers();
+    }
+
+    static void AddCustomer(Customer customer)
+    {
+        if (customer != null)
+        {
+            customer.gameObject.SetActive(true);
+
+            if (!sm_waitingCustomers.Contains(customer))
+                sm_waitingCustomers.Add(customer);
+        }
+    }
+
+    static void FreeCustomerDeferred(Customer customer)
+    {
+        if (!sm_leavingCustomers.Contains(customer))
+            sm_leavingCustomers.Add(customer);
+    }
+
+    static void RemoveCustomers()
+    {
+        foreach (Customer customer in sm_leavingCustomers)
+            FreeCustomer(customer);
+
+        sm_leavingCustomers.Clear();
+    }
+
+    static public Customer AllocCustomer()
+    {
+        Customer customer = null;
+
+        if (sm_freeCustomers.Count > 0)
+        {
+            customer = sm_freeCustomers[0];
+            sm_freeCustomers.RemoveAt(0);
+        }
+        
+        AddCustomer(customer);
+        
+        return customer;
+    }
+
+
+    static public void FreeCustomer(Customer customer)
+    {
+        if (customer == null)
+            return;
+
+        if (!sm_freeCustomers.Contains(customer))
+            sm_freeCustomers.Add(customer);
+
+        Order order = customer.GetOrder();
+
+        FreeOrder(order);
+
+        customer.gameObject.SetActive(false);
+    }
+
+
     void ConstructRandomIngredientList()
     {
         m_ingredientsTMP.Clear();
@@ -121,21 +217,29 @@ public class OrderDispatcher : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Check outstanding orders
+        UpdateCustomers();
+
         m_nextOrderTime -= Time.deltaTime;
 
         if (m_nextOrderTime < 0)
         {
-            // In case new ones were added - SHould not aloways call this
-            if (Waiter.HasAvaliableSeating())
-            {
+            Customer customer = AllocCustomer();
+
+            if (customer!=null)
+            { 
+                // In case new ones were added - SHould not aloways call this
                 GatherIngredients();
 
                 ConstructRandomIngredientList();
 
                 Order newOrder = CreateOrder(Random.Range(30.0f,120.0f), Random.Range(1,10), m_ingredientsTMP);
 
-                if (!Waiter.AddOrder(newOrder))
+                customer.SetOrder(newOrder);
+
+                if (!Waiter.AddCustomer(customer))
                 {
+                    FreeCustomer(customer);
                     FreeOrder(newOrder);
                 }
                 else
