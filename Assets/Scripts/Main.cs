@@ -49,6 +49,14 @@ public class Main : MonoBehaviour
     {
         _inst = this;
 
+        Player[] allCharacters = GetComponentsInChildren<Player>();
+
+        foreach (Player player in allCharacters)
+        {
+            m_playersMap[player.m_playerID] = player;
+            m_playersList.Add(player);
+        }
+
         ChangeState(GAME_STATE.INIT);
     }
 
@@ -72,13 +80,9 @@ public class Main : MonoBehaviour
             return;
         }
 
-        Player[] allCharacters = GetComponentsInChildren<Player>();
-
-        foreach (Player player in allCharacters)
-        {
-            m_playersMap[player.m_playerID] = player;
-            m_playersList.Add(player);
-        }
+        foreach (Player player in m_playersList)
+            player.Reset();
+        
 
         m_floaterTemplate   = GetComponentInChildren<Floater>();
         m_scoreKeeper       = GetComponentInChildren<ScoreKeeper>();
@@ -305,6 +309,19 @@ public class Main : MonoBehaviour
                 player.AddScore(score);
         }
     }
+
+    public void OnRetry()
+    {
+        ChangeState(GAME_STATE.INIT);
+
+    }
+
+    public void OnQuit()
+    {
+        Application.Quit();
+
+    }
+
 
     // ******************************************
     // Audio System Helpers

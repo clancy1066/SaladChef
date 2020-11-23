@@ -40,9 +40,14 @@ public class PLAYER_VITALS
 {
     public string   m_name  = "No Name";
     public int      m_score = 0;
-    public float    m_timer = 300.0f;
+    public float    m_timer = 3.0f;
 
-    public void SetName(string name)
+    public PLAYER_VITALS()
+    {
+        Reset();
+}
+
+public void SetName(string name)
     {
         m_name = name;
     }
@@ -51,6 +56,14 @@ public class PLAYER_VITALS
     {
         m_score += score.m_value;
         m_timer += score.m_timeBonus;
+
+    }
+
+    public void Reset()
+    {
+        m_name = "No Name";
+        m_score = 0;
+        m_timer = 3.0f;
     }
 };
 
@@ -107,6 +120,11 @@ public class Player : MonoBehaviour,I_GameCharacter
         Choose();
 
         ChangeState(PLAYER_STATE.IDLE);
+    }
+
+    public void Reset()
+    {
+        m_playerVitals.Reset();
     }
 
     public void Choose()
@@ -240,15 +258,18 @@ public class Player : MonoBehaviour,I_GameCharacter
             if (m_ingredients.Count>= cm_MAX_INGREDIENTS)
             {
                 // If I have an ingredient no table, drop it
-                if (m_focusChoppingTable!=null)
+                if (m_focusChoppingTable != null)
                 {
                     // If I have an ingredient and a table, drop it on the table
                     m_focusChoppingTable.AddIngredients(m_ingredients);
-                    
+
                     ClearIngredients();
                 }
                 else
+                {
+                    Main.AUDIO_Wrong();
                     Main.SendFloater(m_model.transform.position + Vector3.up, 3.0f, ("Inventory Full"));
+                }
             }
             // Can carry more ingredients
             else

@@ -101,9 +101,12 @@ public class ChoppingTable : MonoBehaviour
             if (Done())
             {
                 int pointsToAdd = Waiter.SubmitPlate(m_playerID, m_currentIngredientsMask);
-                
-                if (pointsToAdd<=0)
+
+                if (pointsToAdd <= 0)
+                {
                     Main.SendFloater(m_ingredientPos.transform.position, 2.0f, ("Failed and fed to the dogs"));
+                    Main.AUDIO_Wrong();
+                }
 
                 ClearIngredients();
           

@@ -50,9 +50,7 @@ public class HiScores : MonoBehaviour
     {
         if (m_container != null)
             m_text = GetComponentsInChildren<Text>();
-
-        WriteFile();
-
+        
         ReadFile();
  ;    }
 
