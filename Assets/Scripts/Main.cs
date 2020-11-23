@@ -21,9 +21,10 @@ public class Main : MonoBehaviour
     public Transform m_startScreen;
     public Transform m_gameScreen;
     public Transform m_hiScoreScreen;
+    HiScores         m_hiScores;
 
-    // Score Keeper
-    ScoreKeeper      m_scoreKeeper;
+   // Score Keeper
+   ScoreKeeper      m_scoreKeeper;
 
     // State machine management
     GAME_STATE m_gameState  = GAME_STATE.INIT;
@@ -57,10 +58,16 @@ public class Main : MonoBehaviour
             m_playersList.Add(player);
         }
 
+        if (m_hiScoreScreen != null)
+            m_hiScores = m_hiScoreScreen.GetComponentInChildren<HiScores>();
+
         ChangeState(GAME_STATE.INIT);
     }
 
     // Update is called once per frame
+    // ****************************************************
+    // Game floaw state machine
+    // ****************************************************
     void Update()
     {
         switch (m_gameState)
@@ -71,6 +78,7 @@ public class Main : MonoBehaviour
             case GAME_STATE.SCORES: UpdateScores(); break;
         }
     }
+
 
     void UpdateInit()
     {
@@ -150,7 +158,6 @@ public class Main : MonoBehaviour
 
     void UpdateScores()
     {
-
         if (HandleStateChanged())
         {
             if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(true);
@@ -159,9 +166,19 @@ public class Main : MonoBehaviour
             ActivateLevel(m_hiScoreScreen, true);
             ActivateLevel(m_gameScreen, false);
 
-            SetupPlayers();
+            if (m_hiScores != null)
+            {
+                foreach (Player player in m_playersList)
+                    m_hiScores.InsertElement(player.GetVitals());
 
-            AUDIO_Track2(true);
+                m_hiScores.PopulatePanel();
+
+                m_hiScores.WriteFile();
+            }
+
+            
+            AUDIO_Track2(false);
+            AUDIO_Track1(true);
 
         }
 

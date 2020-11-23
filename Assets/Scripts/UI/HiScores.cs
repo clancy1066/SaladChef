@@ -52,15 +52,21 @@ public class HiScores : MonoBehaviour
             m_text = GetComponentsInChildren<Text>();
         
         ReadFile();
- ;    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
-    void WriteFile()
+
+    // Update is called once per frame
+    public void InsertElement(PLAYER_VITALS vitals)
+    {
+        HI_SCORE aScore = new HI_SCORE();
+
+        aScore.m_name   = vitals.m_name;
+        aScore.m_score = vitals.m_score;
+
+        m_currentHiScores[aScore.m_score] = aScore.m_name;
+    }
+
+    public void WriteFile()
     {
         HI_SCORE hiScore = new HI_SCORE();
 
@@ -91,7 +97,7 @@ public class HiScores : MonoBehaviour
         PopulatePanel();
     }
 
-    void PopulatePanel()
+    public void PopulatePanel()
     {
         int maxCount = m_currentHiScores.Count;
         int textIndex = 0;

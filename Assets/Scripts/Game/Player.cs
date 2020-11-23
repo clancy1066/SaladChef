@@ -63,7 +63,7 @@ public void SetName(string name)
     {
         m_name = "No Name";
         m_score = 0;
-        m_timer = 3.0f;
+        m_timer = 300.0f;
     }
 };
 
@@ -191,7 +191,7 @@ public class Player : MonoBehaviour,I_GameCharacter
         else
             m_playerVitals.m_timer = 0.0f;
 
-        return m_playerVitals.m_timer >= 0;
+        return m_playerVitals.m_timer > 0;
 ;
     }
 
