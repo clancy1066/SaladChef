@@ -1,5 +1,28 @@
 # SaladChef
 TentWorks Test
+
+
+
+Usage:
+
+Player1 – Movement: W,A,S,D. 	Action: F1
+Player2 – Movement: Arrow Keys. 	Action: R-Ctrl
+
+Notes/Features:
+
+
+
+Known Bugs:
+===========
+
+
+Problem:
+========
+
+
+// **********************************************
+// Th following is a recap of the commits from the beginning of the project
+// **********************************************
 11/14/2020 - Initial framework. Restaurant,characters, animations, props, Input system and game wrapper
 11/15/2020 3:18:23 AM +00:00	Base Game Object Player
 11/16/2020 11:48:17 PM +00:00	Added some collision to tables.Fix a Rigidbody
@@ -23,6 +46,20 @@ TentWorks Test
 11/21/2020 6:15:56 AM + 00:00    With last submt
 11/21/2020 6:15:23 AM + 00:00    With last submit
 11/21/2020 6:14:26 AM + 00:00    Hooking up UI
+11/21/2020 4:49:49 PM +00:00	Fixed a simple thing in the scorekeeper
+11/22/2020 2:52:29 AM + 00:00    Add Player timeout and go to hi score screen
+11/22/2020 1:23:25 AM + 00:00    Adding High Scores: Part 1
+11/21/2020 10:47:10 PM + 00:00   Time bonus added for finishing orders early. Punishment for missing orders11/21/2020 9:35:39 PM + 00:00    More UI.Player names
+11/21/2020 8:36:38 PM +00:00	Added simple audio system
+ 11/21/2020 6:35:00 PM +00:00	Added dissatisfied customers and point penalties
+11/23/2020 2:59:56 AM + 00:00    Fixed high scores. Load/Save
+11/23/2020 1:52:31 AM + 00:00    Fixed a restart Bug
+11/23/2020 1:13:51 AM + 00:00    Restart
+ 11/23/2020 12:40:50 AM + 00:00   Fixed placement of ingreidents in player satchel and chopping table
+11/23/2020 12:04:48 AM + 00:00   Fixed a silly memory bug
+
+
+
 
 
 

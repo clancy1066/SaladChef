@@ -47,7 +47,22 @@ public class Order : MonoBehaviour
 
             newText += ("\nTime:\t"+ minutes.ToString() + ":" + seconds.ToString());
 
+           
             m_text.text = newText;
+
+            m_text.color = Color.green;
+
+            
+            if (minutes< 1)
+            {
+                if (seconds < 30.0f)
+               
+                    m_text.color = Color.red;
+                else
+                    m_text.color = Color.yellow;
+            }
+
+           
         }
 
         if (m_customerWaitTimeRemaining > 0)
