@@ -22,6 +22,9 @@ public enum PLAYER_STATE
 
 }
 
+// ******************************************
+// For recording score to score keeper
+// ******************************************
 public struct PLAYER_SCORE
 {
     public PLAYER_ID    m_playerID;
@@ -36,6 +39,9 @@ public struct PLAYER_SCORE
     }
 };
 
+// ******************************************
+// Only stats we care about
+// ******************************************
 public class PLAYER_VITALS
 {
     public string   m_name  = "No Name";
@@ -63,11 +69,13 @@ public void SetName(string name)
     {
         m_name = "No Name";
         m_score = 0;
-        m_timer = 300.0f;
+        m_timer = 3.0f;
     }
 };
 
-
+// ******************************************
+// The main Player class
+// ******************************************
 public class Player : MonoBehaviour,I_GameCharacter
 {
     // Animation signals
@@ -122,12 +130,16 @@ public class Player : MonoBehaviour,I_GameCharacter
         ChangeState(PLAYER_STATE.IDLE);
     }
 
+    // ******************************************
+    // Player bookkeeping
+    // ******************************************
     public void Reset()
     {
         m_playerVitals.Reset();
 
     }
 
+    // Players can have more than one model
     public void Choose()
     {
         if (m_models == null)
@@ -145,6 +157,88 @@ public class Player : MonoBehaviour,I_GameCharacter
         m_model.gameObject.SetActive(true);
     }
 
+
+    void ClearIngredients()
+    {
+        foreach (Ingredient ingredient in m_ingredients)
+            Ingredient.Release(ingredient);
+
+        m_ingredients.Clear();
+    }
+
+    // Player actions on a available ingredient
+    void CaptureIngredient()
+    {
+        Ingredient newIngredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
+
+        if (newIngredient != null)
+        {
+            Main.AUDIO_Pickup();
+
+            Main.SendFloater(m_focusIngredient.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
+
+            Vector3 offset = 0.2f * Ingredient.GetPlacementOffset(m_ingredients.Count);
+
+            newIngredient.transform.localScale *= 0.75f;
+            newIngredient.transform.localPosition = Vector3.zero;
+            newIngredient.transform.position = m_model.GetHolder().transform.position + offset;
+            newIngredient.transform.parent = m_model.GetHolder().transform;
+
+            if (!m_ingredients.Contains(newIngredient))
+                m_ingredients.Add(newIngredient);
+
+            newIngredient.m_grabbedByPlayer = true;
+
+            //   Main.SendFloater(m_model.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
+        }
+    }
+
+
+    void FullStop()
+    {
+        if (m_rb != null)
+        {
+            m_rb.ResetCenterOfMass();
+            m_rb.ResetInertiaTensor();
+
+            CorrectAngles();
+
+            //   m_rb.position = m_model.transform.position;
+        }
+    }
+
+    public void AddScore(PLAYER_SCORE score)
+    {
+        m_playerVitals.AddScore(score);
+    }
+
+    public PLAYER_VITALS GetVitals() { return m_playerVitals; }
+
+    // Mini-hack because of animations
+    void CorrectAngles()
+    {
+        Vector3 localEuler = m_model.transform.eulerAngles;
+
+        localEuler.x = 0.0f;
+        localEuler.z = 0.0f;
+
+        m_model.transform.eulerAngles = localEuler;
+    }
+
+    bool IsMoving(MY_GAME_INPUTS gi)
+    {
+        float moveMag = Mathf.Abs(gi.moveDirs.sqrMagnitude);
+
+        return moveMag > 0.001f;
+    }
+
+    // ******************************************
+    // End Player bookkeeping
+    // ******************************************
+
+    // ******************************************
+    // Player state machine
+    // ******************************************
     bool HandleNewState()
     {
         bool retVal = m_stateChanged;
@@ -153,8 +247,6 @@ public class Player : MonoBehaviour,I_GameCharacter
 
         return retVal;
     }
-
-   
 
     void ChangeState(PLAYER_STATE newState)
     {
@@ -196,40 +288,7 @@ public class Player : MonoBehaviour,I_GameCharacter
 ;
     }
 
-    void ClearIngredients()
-    {
-        foreach (Ingredient ingredient in m_ingredients)
-            Ingredient.Release(ingredient);
-
-        m_ingredients.Clear();
-    }
-
-    void CaptureIngredient()
-    {
-        Ingredient newIngredient = Ingredient.Grab(m_focusIngredient.m_ingredientType);
-
-        if (newIngredient != null)
-        {
-            Main.AUDIO_Pickup();
-
-            Main.SendFloater(m_focusIngredient.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
-
-            Vector3 offset = 0.2f * Ingredient.GetPlacementOffset(m_ingredients.Count);
-
-            newIngredient.transform.localScale      *= 0.75f;
-            newIngredient.transform.localPosition   = Vector3.zero;
-            newIngredient.transform.position        = m_model.GetHolder().transform.position+offset;
-            newIngredient.transform.parent          = m_model.GetHolder().transform;
-
-            if (!m_ingredients.Contains(newIngredient))
-                m_ingredients.Add(newIngredient);
-
-            newIngredient.m_grabbedByPlayer = true;
-
-         //   Main.SendFloater(m_model.transform.position, 2.0f, ("You picked up " + newIngredient.m_ingredientType.ToString()));
-        }
-    }
-
+    // Main decision maker
     void CheckAction(MY_GAME_INPUTS gi)
     {
         if (m_model == null)
@@ -295,43 +354,6 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
     }
 
-    void FullStop()
-    {
-        if (m_rb != null)
-        {
-            m_rb.ResetCenterOfMass();
-            m_rb.ResetInertiaTensor();
-
-            CorrectAngles();
-
-            //   m_rb.position = m_model.transform.position;
-        }
-    }
-
-    public void AddScore(PLAYER_SCORE score)
-    {
-        m_playerVitals.AddScore(score);
-    }
-
-    public PLAYER_VITALS GetVitals() { return m_playerVitals; }
-        
-    // Mini-hack because of animations
-    void CorrectAngles()
-    {
-        Vector3 localEuler = m_model.transform.eulerAngles;
-
-        localEuler.x = 0.0f;
-        localEuler.z = 0.0f;
-
-        m_model.transform.eulerAngles = localEuler;
-    }
-
-    bool IsMoving(MY_GAME_INPUTS gi)
-    {
-        float moveMag = Mathf.Abs(gi.moveDirs.sqrMagnitude);
-
-        return moveMag > 0.001f;
-    }
 
     // ***************************************************
     // Player state machine
@@ -421,8 +443,13 @@ public class Player : MonoBehaviour,I_GameCharacter
         }
     }
 
+    // ***************************************************
+    // ENd Player state machine
+    // ***************************************************
+
+    // ***************************************************
     // Collision callbacks
-    
+    // ***************************************************
     // Player near a grabbable ingredient
     public void OnFoundIngredient(Ingredient ingredient)
     {

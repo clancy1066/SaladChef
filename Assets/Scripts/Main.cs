@@ -66,7 +66,7 @@ public class Main : MonoBehaviour
 
     // Update is called once per frame
     // ****************************************************
-    // Game floaw state machine
+    // Game flow state machine
     // ****************************************************
     void Update()
     {
@@ -79,7 +79,32 @@ public class Main : MonoBehaviour
         }
     }
 
+    // *************************************************
+    // Game State Manipulations
+    // *************************************************
+    void ChangeState(GAME_STATE newState)
+    {
+        m_levelComplete = false;
+        m_gameStateChanged = true;
+        m_gameState = newState;
+    }
 
+    bool HandleStateChanged()
+    {
+        bool retVal = m_gameStateChanged;
+
+        m_gameStateChanged = false;
+
+        return retVal;
+    }
+    // *************************************************
+    // End Game State Manipulations
+    // *************************************************
+
+
+    // *************************************************
+    // Game States
+    // *************************************************
     void UpdateInit()
     {
         if (HandleStateChanged())
@@ -169,7 +194,7 @@ public class Main : MonoBehaviour
     {
         if (HandleStateChanged())
         {
-            if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(true);
+            if (m_scoreKeeper != null) m_scoreKeeper.gameObject.SetActive(false);
 
             ActivateLevel(m_startScreen, false);
             ActivateLevel(m_hiScoreScreen, true);
@@ -206,6 +231,10 @@ public class Main : MonoBehaviour
 
     }
 
+    // *************************************************
+    // End Game States
+    // *************************************************
+
     void ActivateLevel(Transform screen, bool onOrOff)
     {
         if (screen != null)
@@ -213,6 +242,8 @@ public class Main : MonoBehaviour
     }
 
     // *************** End game state machine ******************/
+
+
 
     void SetupPlayers()
     {
@@ -223,6 +254,9 @@ public class Main : MonoBehaviour
 
     }
 
+    // *************************************************
+    // Player Manipulations
+    // ************************************************
     void ChangePlayerName(PLAYER_ID playerID,string newName)
     {
         Player player = (m_playersMap.ContainsKey(playerID) ? m_playersMap[playerID] : null);
@@ -249,31 +283,30 @@ public class Main : MonoBehaviour
         if (m_scoreKeeper == null)
             return;
 
-        for (PLAYER_ID iter=PLAYER_ID.PLAYER1;iter<PLAYER_ID.MAX;iter++)
+        if (m_isTwoPlayerGame)
         {
-            Player player = (m_playersMap.ContainsKey(iter) ? m_playersMap[iter] : null);
+            for (PLAYER_ID iter = PLAYER_ID.PLAYER1; iter < PLAYER_ID.MAX; iter++)
+            {
+                Player player = (m_playersMap.ContainsKey(iter) ? m_playersMap[iter] : null);
+
+                if (player != null)
+                    m_scoreKeeper.SetScore(iter, player.GetVitals());
+            }
+        }
+        else
+        {
+            Player player = (m_playersMap.ContainsKey(PLAYER_ID.PLAYER1) ? m_playersMap[PLAYER_ID.PLAYER1] : null);
 
             if (player != null)
-                m_scoreKeeper.SetScore(iter, player.GetVitals());
+                m_scoreKeeper.SetScore(PLAYER_ID.PLAYER1, player.GetVitals());
         }
     }
 
-    void ChangeState(GAME_STATE newState)
-    {
-        m_levelComplete     = false;
-        m_gameStateChanged  = true;
-        m_gameState         = newState;
-    }
+    // *************************************************
+    // End Player Manipulations
+    // *************************************************
 
-    bool HandleStateChanged()
-    {
-        bool retVal = m_gameStateChanged;
-
-        m_gameStateChanged = false;
-
-        return retVal;
-    }
-
+   
     // **********************************************************
     // Special effects (Floaters only)
     // **********************************************************
@@ -364,8 +397,18 @@ public class Main : MonoBehaviour
     public void OnQuit()
     {
         Application.Quit();
+#if UNITY_EDITOR
+        // Application.Quit() does not work in the editor so
+        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
 
     }
+    // *************************************************
+    // End message handlers
+    // *************************************************
 
 
     // ******************************************
@@ -416,6 +459,10 @@ public class Main : MonoBehaviour
     {
         if (m_audioSystem != null) m_audioSystem.Track2(onOrOff);
     }
+
+    // ******************************************
+    // End Audio System Helpers
+    // ******************************************
 }
 
 

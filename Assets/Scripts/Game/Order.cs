@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// **************************
+// Customers create orders
+// **************************
 public class Order : MonoBehaviour
 {
     List<Ingredient> m_ingredients = new List<Ingredient>();
